@@ -12,6 +12,10 @@ class CellEmptyException(MoveException):
     pass
 
 
+class CellNotEmptyException(MoveException):
+    pass
+
+
 class InvalidTurnException(MoveException):
     pass
 
@@ -33,6 +37,10 @@ class Cell(object):
 
     def set_empty(self):
         self._piece = None
+
+    @property
+    def is_empty(self):
+        return self._piece is None
 
     def move(self, to_row, to_col):
         if not self._piece:
@@ -77,6 +85,9 @@ class Pawn(Piece):
             to_col == actual_position.col and
             to_row == (actual_position.row + self.COLOR_DIRECTION[self.color])
         ):
+            if not self.board.get_position(to_row, to_col).is_empty:
+                raise CellNotEmptyException()
+
             self.board.set_piece(self, to_row, to_col)
             return
 
@@ -282,6 +293,38 @@ class TestChess(unittest.TestCase):
             expected_board
         )
 
+    def test_simple_move_pawn_still_stop_by_piece(self):
+        board = Board()
+
+        # move white pawn
+        board.move(6, 3, 5, 3)
+        # move black pawn
+        board.move(1, 3, 2, 3)
+        # move white pawn
+        board.move(5, 3, 4, 3)
+        # move black pawn
+        board.move(2, 3, 3, 3)
+
+        with self.assertRaises(CellNotEmptyException):
+            # try to move white pawn over black pawn
+            board.move(4, 3, 3, 3)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|        |\n'\
+            '2|ppp pppp|\n'\
+            '3|        |\n'\
+            '4|   p    |\n'\
+            '5|   P    |\n'\
+            '6|        |\n'\
+            '7|PPP PPPP|\n'\
+            '8|        |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
 
 if __name__ == '__main__':
     unittest.main()
