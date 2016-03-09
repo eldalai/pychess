@@ -87,22 +87,28 @@ class Board(object):
         self.actual_turn = WHITE
         self._board = [[Cell(board=self) for i in range(8)] for j in range(8)]
         for col in xrange(0, 8):
-            pawn = Pawn(board=self, color=WHITE, row=6, col=col)
-            self._board[6][col].set_piece(pawn)
-            pawn = Pawn(board=self, color=BLACK, row=1, col=col)
-            self._board[1][col].set_piece(pawn)
+            white_pawn = Pawn(board=self, color=WHITE, row=6, col=col)
+            self.set_position(white_pawn, 6, col)
+            black_pawn = Pawn(board=self, color=BLACK, row=1, col=col)
+            self.set_position(black_pawn, 1, col)
+
+    def get_position(self, col, row):
+        return self._board[col][row]
+
+    def set_position(self, piece, col, row):
+        self.get_position(col, row).set_piece(piece)
+        piece.set_position(col, row)
 
     def move(self, from_col, from_row, to_col, to_row):
-        self._board[from_col][from_row].move(to_col, to_row)
+        self.get_position(from_col, from_row).move(to_col, to_row)
         if self.actual_turn == WHITE:
             self.actual_turn = BLACK
         else:
             self.actual_turn = WHITE
 
-    def set_piece(self, piece, to_x, to_y):
-        self._board[piece.row][piece.col].set_empty()
-        self._board[to_x][to_y].set_piece(piece)
-        piece.set_position(to_x, to_y)
+    def set_piece(self, piece, to_col, to_row):
+        self.get_position(piece.row, piece.col).set_empty()
+        self.set_position(piece, to_col, to_row)
 
     def __str__(self):
         _str = 'B*12345678*\n'
