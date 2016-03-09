@@ -20,7 +20,11 @@ class InvalidTurnException(MoveException):
     pass
 
 
-class InvalidEatException(object):
+class InvalidEatException(MoveException):
+    pass
+
+
+class InvalidArgumentException(MoveException):
     pass
 
 
@@ -163,6 +167,9 @@ class Board(object):
         self.get_position(row, col).set_piece(piece)
 
     def move(self, from_row, from_col, to_row, to_col):
+        for arg in [from_row, from_col, to_row, to_col]:
+            if arg < 0 or arg > 7:
+                raise InvalidArgumentException()
         self.get_position(from_row, from_col).move(to_row, to_col)
         if self.actual_turn == WHITE:
             self.actual_turn = BLACK
@@ -207,7 +214,27 @@ class TestChess(unittest.TestCase):
             expected_board
         )
 
-    def test_try_move__unexistence_pawn(self):
+    def test_board_invalid_argument(self):
+        board = Board()
+        with self.assertRaises(InvalidArgumentException):
+            board.move(-1, 1, 1, 1)
+
+        with self.assertRaises(InvalidArgumentException):
+            board.move(8, 1, 2, 2)
+
+        with self.assertRaises(InvalidArgumentException):
+            board.move(6, -1, 3, 3)
+
+        with self.assertRaises(InvalidArgumentException):
+            board.move(4, 10, 4, 4)
+
+        with self.assertRaises(InvalidArgumentException):
+            board.move(6, 3, -1, 4)
+
+        with self.assertRaises(InvalidArgumentException):
+            board.move(6, 3, 5, -4)
+
+    def test_try_move_unexistence_pawn(self):
         board = Board()
 
         with self.assertRaises(CellEmptyException):
@@ -476,6 +503,37 @@ class TestChess(unittest.TestCase):
             '5|    p   |\n'\
             '6|        |\n'\
             '7|PPP PPPP|\n'\
+            '8|        |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_double_move_pawn_or_simple(self):
+        board = Board()
+
+        # move white pawn
+        board.move(6, 3, 4, 3)
+        # move black pawn
+        board.move(1, 4, 3, 4)
+        # move white pawn
+        board.move(4, 3, 3, 3)
+        # move black pawn
+        board.move(3, 4, 4, 4)
+        # move white pawn
+        board.move(6, 4, 5, 4)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|        |\n'\
+            '2|pppp ppp|\n'\
+            '3|        |\n'\
+            '4|   P    |\n'\
+            '5|    p   |\n'\
+            '6|    P   |\n'\
+            '7|PPP  PPP|\n'\
             '8|        |\n'\
             'W*--------*\n'
 
