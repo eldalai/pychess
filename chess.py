@@ -3,6 +3,11 @@ import unittest
 WHITE = 'white'
 BLACK = 'black'
 
+PAWN_INITIAL_ROW = {
+    WHITE: 6,
+    BLACK: 1,
+}
+
 
 class MoveException(Exception):
     pass
@@ -86,7 +91,6 @@ class Pawn(Piece):
 
     def __init__(self, board, color):
         super(Pawn, self).__init__(board, color)
-        self.initial_move = True
 
     def move(self, to_row, to_col):
         actual_position = self.board.get_piece_position(self)
@@ -99,13 +103,13 @@ class Pawn(Piece):
                 raise CellNotEmptyException()
 
             self.board.set_piece(self, to_row, to_col)
-            self.initial_move = False
             return
 
         # double initial move
         if(
             to_col == actual_position.col and
-            to_row == (actual_position.row + self.COLOR_DIRECTION[self.color] * 2)
+            to_row == (actual_position.row + self.COLOR_DIRECTION[self.color] * 2) and
+            actual_position.row == PAWN_INITIAL_ROW[self.color]
         ):
             if not self.board.get_position(to_row, to_col).is_empty:
                 raise CellNotEmptyException()
@@ -113,7 +117,6 @@ class Pawn(Piece):
                 raise CellNotEmptyException()
 
             self.board.set_piece(self, to_row, to_col)
-            self.initial_move = False
             return
 
         # eat
@@ -150,9 +153,9 @@ class Board(object):
         self._board = [[Cell(board=self) for i in range(8)] for j in range(8)]
         for col in xrange(0, 8):
             white_pawn = Pawn(board=self, color=WHITE)
-            self.set_position(white_pawn, 6, col)
+            self.set_position(white_pawn, PAWN_INITIAL_ROW[WHITE], col)
             black_pawn = Pawn(board=self, color=BLACK)
-            self.set_position(black_pawn, 1, col)
+            self.set_position(black_pawn, PAWN_INITIAL_ROW[BLACK], col)
 
     def get_position(self, row, col):
         return self._board[row][col]
@@ -468,6 +471,38 @@ class TestChess(unittest.TestCase):
             '3|        |\n'\
             '4|        |\n'\
             '5|   P    |\n'\
+            '6|        |\n'\
+            '7|PPP PPPP|\n'\
+            '8|        |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_try_double_initial_move_pawn_twice(self):
+        board = Board()
+        # double move white pawn
+        board.move(6, 3, 4, 3)
+        # double move black pawn
+        board.move(1, 4, 3, 4)
+        with self.assertRaises(MoveException):
+            # double move white pawn
+            board.move(4, 3, 2, 3)
+        board.move(4, 3, 3, 3)
+        with self.assertRaises(MoveException):
+            # double move white pawn
+            board.move(3, 4, 5, 4)
+        board.move(3, 4, 4, 4)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|        |\n'\
+            '2|pppp ppp|\n'\
+            '3|        |\n'\
+            '4|   P    |\n'\
+            '5|    p   |\n'\
             '6|        |\n'\
             '7|PPP PPPP|\n'\
             '8|        |\n'\
