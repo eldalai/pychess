@@ -206,7 +206,7 @@ class TestChess(unittest.TestCase):
 
     def test_simple_move_pawn(self):
         board = Board()
-
+        # move white pawn
         board.move(6, 3, 5, 3)
 
         expected_board = \
@@ -229,8 +229,41 @@ class TestChess(unittest.TestCase):
     def test_simple_move_pawn_twice(self):
         board = Board()
 
+        # move white pawn
         board.move(6, 3, 5, 3)
+        # move black pawn
         board.move(1, 3, 2, 3)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|        |\n'\
+            '2|ppp pppp|\n'\
+            '3|   p    |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|   P    |\n'\
+            '7|PPP PPPP|\n'\
+            '8|        |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_simple_move_pawn_twice_black_again(self):
+        board = Board()
+
+        # move white pawn
+        board.move(6, 3, 5, 3)
+        # try to move black pawn again
+        with self.assertRaises(InvalidTurnException):
+            board.move(5, 3, 4, 3)
+        # move black pawn
+        board.move(1, 3, 2, 3)
+        # try to move black pawn again
+        with self.assertRaises(InvalidTurnException):
+            board.move(2, 3, 2, 4)
 
         expected_board = \
             'B*12345678*\n' \
