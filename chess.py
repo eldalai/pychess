@@ -20,6 +20,10 @@ class InvalidTurnException(MoveException):
     pass
 
 
+class InvalidEatException(object):
+    pass
+
+
 class Cell(object):
     def __init__(self, board):
         self._piece = None
@@ -79,14 +83,28 @@ class Pawn(Piece):
     def move(self, to_row, to_col):
         actual_position = self.board.get_piece_position(self)
         # simple move
-        if to_col != actual_position.col:
-            raise MoveException()
         if(
             to_col == actual_position.col and
             to_row == (actual_position.row + self.COLOR_DIRECTION[self.color])
         ):
             if not self.board.get_position(to_row, to_col).is_empty:
                 raise CellNotEmptyException()
+
+            self.board.set_piece(self, to_row, to_col)
+            return
+
+        # eat
+        if(
+            (
+                to_col == actual_position.col - 1 or
+                to_col == actual_position.col + 1
+            ) and
+            to_row == (actual_position.row + self.COLOR_DIRECTION[self.color])
+        ):
+            if self.board.get_position(to_row, to_col).is_empty:
+                raise CellEmptyException()
+            if self.board.get_position(to_row, to_col).piece.color == self.color:
+                raise InvalidEatException()
 
             self.board.set_piece(self, to_row, to_col)
             return
@@ -315,6 +333,71 @@ class TestChess(unittest.TestCase):
             '2|ppp pppp|\n'\
             '3|        |\n'\
             '4|   p    |\n'\
+            '5|   P    |\n'\
+            '6|        |\n'\
+            '7|PPP PPPP|\n'\
+            '8|        |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_pawn_eat_pawn(self):
+        board = Board()
+
+        # move white pawn
+        board.move(6, 3, 5, 3)
+        # move black pawn
+        board.move(1, 4, 2, 4)
+        # move white pawn
+        board.move(5, 3, 4, 3)
+        # move black pawn
+        board.move(2, 4, 3, 4)
+
+        # white pawn eat black pawn
+        board.move(4, 3, 3, 4)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|        |\n'\
+            '2|pppp ppp|\n'\
+            '3|        |\n'\
+            '4|    P   |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|PPP PPPP|\n'\
+            '8|        |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_pawn_invalid_eat(self):
+        board = Board()
+
+        # move white pawn
+        board.move(6, 3, 5, 3)
+        # move black pawn
+        board.move(1, 4, 2, 4)
+        # move white pawn
+        board.move(5, 3, 4, 3)
+        # move black pawn
+        board.move(2, 4, 3, 4)
+
+        with self.assertRaises(CellEmptyException):
+            # white pawn try eat empty cell
+            board.move(4, 3, 3, 2)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|        |\n'\
+            '2|pppp ppp|\n'\
+            '3|        |\n'\
+            '4|    p   |\n'\
             '5|   P    |\n'\
             '6|        |\n'\
             '7|PPP PPPP|\n'\
