@@ -1,6 +1,13 @@
 import unittest
 
-from chess import *
+from chess import (
+    Board,
+    CellEmptyException,
+    CellNotEmptyException,
+    InvalidArgumentException,
+    InvalidTurnException,
+    MoveException,
+)
 
 
 class TestChess(unittest.TestCase):
