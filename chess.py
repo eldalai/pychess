@@ -162,6 +162,14 @@ class Rook(Piece):
             (self.row == to_row and self.col != to_col) or
             (self.row != to_row and self.col == to_col)
         ):
+            destiny_cell = self.board.get_position(to_row, to_col)
+            # eat
+            if(
+                not destiny_cell.is_empty and
+                destiny_cell.piece.color == self.color
+            ):
+                raise InvalidEatException()
+
             self.board.set_piece(self, to_row, to_col)
             return
 

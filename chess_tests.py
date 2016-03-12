@@ -6,6 +6,7 @@ from chess import (
     CellEmptyException,
     CellNotEmptyException,
     InvalidArgumentException,
+    InvalidEatException,
     InvalidTurnException,
     MoveException,
 )
@@ -296,6 +297,46 @@ class TestPawns(unittest.TestCase):
             expected_board
         )
 
+    def test_pawn_invalid_eat_same_color(self):
+        board = BoardFactory.with_pawns()
+
+        # move white pawn
+        board.move(6, 3, 5, 3)
+        # move black pawn
+        board.move(1, 4, 2, 4)
+        with self.assertRaises(InvalidEatException):
+            # white pawn try eat same color
+            board.move(6, 2, 5, 3)
+        with self.assertRaises(InvalidEatException):
+            # white pawn try eat same color
+            board.move(6, 4, 5, 3)
+        # move white pawn
+        board.move(6, 0, 5, 0)
+
+        with self.assertRaises(InvalidEatException):
+            # black pawn try eat same color
+            board.move(1, 3, 2, 4)
+        with self.assertRaises(InvalidEatException):
+            # black pawn try eat same color
+            board.move(1, 5, 2, 4)
+
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|        |\n'\
+            '2|pppp ppp|\n'\
+            '3|    p   |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|P  P    |\n'\
+            '7| PP PPPP|\n'\
+            '8|        |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
     def test_double_initial_move_pawn(self):
         board = BoardFactory.with_pawns()
         # move white pawn
@@ -436,6 +477,121 @@ class TestRooks(unittest.TestCase):
             expected_board
         )
 
+    def test_try_move_unexistence_rook(self):
+        board = BoardFactory.with_rooks()
+
+        with self.assertRaises(CellEmptyException):
+            board.move(1, 1, 1, 1)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|r      r|\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|        |\n'\
+            '8|R      R|\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_try_invalid_color_move_rook(self):
+        board = BoardFactory.with_rooks()
+
+        with self.assertRaises(InvalidTurnException):
+            board.move(0, 0, 0, 1)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|r      r|\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|        |\n'\
+            '8|R      R|\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_try_invalid_diagonal_move_rook(self):
+        board = BoardFactory.with_rooks()
+
+        with self.assertRaises(MoveException):
+            board.move(0, 0, 1, 1)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|r      r|\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|        |\n'\
+            '8|R      R|\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_try_invalid_move_rook(self):
+        board = BoardFactory.with_rooks()
+
+        with self.assertRaises(MoveException):
+            board.move(0, 0, 5, 4)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|r      r|\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|        |\n'\
+            '8|R      R|\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_try_invalid_same_color_move_rook(self):
+        board = BoardFactory.with_rooks()
+
+        with self.assertRaises(InvalidEatException):
+            board.move(7, 0, 7, 7)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|r      r|\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|        |\n'\
+            '8|R      R|\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
     def test_simple_move_rook_up(self):
         board = BoardFactory.with_rooks()
 
@@ -458,6 +614,29 @@ class TestRooks(unittest.TestCase):
             expected_board
         )
 
+    def test_simple_move_rook_twice(self):
+        board = BoardFactory.with_rooks()
 
+        # move white rook up
+        board.move(7, 0, 6, 0)
+        # move black rook down
+        board.move(0, 0, 1, 0)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|       r|\n'\
+            '2|r       |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|R       |\n'\
+            '8|       R|\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
 if __name__ == '__main__':
     unittest.main()
