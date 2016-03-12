@@ -150,16 +150,24 @@ class Pawn(Piece):
         raise MoveException()
 
 
+class BoardFactory(object):
+
+    @classmethod
+    def with_pawns(cls):
+        board = Board()
+        for col in xrange(0, 8):
+            white_pawn = Pawn(board=board, color=WHITE)
+            board.set_position(white_pawn, PAWN_INITIAL_ROW[WHITE], col)
+            black_pawn = Pawn(board=board, color=BLACK)
+            board.set_position(black_pawn, PAWN_INITIAL_ROW[BLACK], col)
+        return board
+
+
 class Board(object):
 
     def __init__(self):
         self.actual_turn = WHITE
         self._board = [[Cell(board=self, row=j, col=i) for i in range(8)] for j in range(8)]
-        for col in xrange(0, 8):
-            white_pawn = Pawn(board=self, color=WHITE)
-            self.set_position(white_pawn, PAWN_INITIAL_ROW[WHITE], col)
-            black_pawn = Pawn(board=self, color=BLACK)
-            self.set_position(black_pawn, PAWN_INITIAL_ROW[BLACK], col)
 
     def get_position(self, row, col):
         return self._board[row][col]

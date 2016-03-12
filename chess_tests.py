@@ -1,7 +1,7 @@
 import unittest
 
 from chess import (
-    Board,
+    BoardFactory,
     CellEmptyException,
     CellNotEmptyException,
     InvalidArgumentException,
@@ -13,7 +13,7 @@ from chess import (
 class TestChess(unittest.TestCase):
 
     def test_board_with_pawns(self):
-        board = Board()
+        board = BoardFactory.with_pawns()
         expected_board = \
             'B*12345678*\n' \
             '1|        |\n'\
@@ -32,7 +32,7 @@ class TestChess(unittest.TestCase):
         )
 
     def test_board_invalid_argument(self):
-        board = Board()
+        board = BoardFactory.with_pawns()
         with self.assertRaises(InvalidArgumentException):
             board.move(-1, 1, 1, 1)
 
@@ -52,7 +52,7 @@ class TestChess(unittest.TestCase):
             board.move(6, 3, 5, -4)
 
     def test_try_move_unexistence_pawn(self):
-        board = Board()
+        board = BoardFactory.with_pawns()
 
         with self.assertRaises(CellEmptyException):
             board.move(0, 0, 1, 1)
@@ -75,7 +75,7 @@ class TestChess(unittest.TestCase):
         )
 
     def test_try_invalid_color_move_pawn(self):
-        board = Board()
+        board = BoardFactory.with_pawns()
 
         with self.assertRaises(InvalidTurnException):
             board.move(1, 3, 2, 3)
@@ -98,7 +98,7 @@ class TestChess(unittest.TestCase):
         )
 
     def test_simple_move_pawn(self):
-        board = Board()
+        board = BoardFactory.with_pawns()
         # move white pawn
         board.move(6, 3, 5, 3)
 
@@ -120,7 +120,7 @@ class TestChess(unittest.TestCase):
         )
 
     def test_simple_move_pawn_twice(self):
-        board = Board()
+        board = BoardFactory.with_pawns()
 
         # move white pawn
         board.move(6, 3, 5, 3)
@@ -145,7 +145,7 @@ class TestChess(unittest.TestCase):
         )
 
     def test_simple_move_pawn_twice_black_again(self):
-        board = Board()
+        board = BoardFactory.with_pawns()
 
         # move white pawn
         board.move(6, 3, 5, 3)
@@ -176,7 +176,7 @@ class TestChess(unittest.TestCase):
         )
 
     def test_simple_move_pawn_still_stop_by_piece(self):
-        board = Board()
+        board = BoardFactory.with_pawns()
 
         # move white pawn
         board.move(6, 3, 5, 3)
@@ -209,7 +209,7 @@ class TestChess(unittest.TestCase):
         )
 
     def test_pawn_eat_pawn(self):
-        board = Board()
+        board = BoardFactory.with_pawns()
 
         # move white pawn
         board.move(6, 3, 5, 3)
@@ -241,7 +241,7 @@ class TestChess(unittest.TestCase):
         )
 
     def test_pawn_invalid_eat(self):
-        board = Board()
+        board = BoardFactory.with_pawns()
 
         # move white pawn
         board.move(6, 3, 5, 3)
@@ -274,7 +274,7 @@ class TestChess(unittest.TestCase):
         )
 
     def test_double_initial_move_pawn(self):
-        board = Board()
+        board = BoardFactory.with_pawns()
         # move white pawn
         board.move(6, 3, 4, 3)
 
@@ -296,7 +296,7 @@ class TestChess(unittest.TestCase):
         )
 
     def test_try_double_initial_move_pawn_twice(self):
-        board = Board()
+        board = BoardFactory.with_pawns()
         # double move white pawn
         board.move(6, 3, 4, 3)
         # double move black pawn
@@ -328,7 +328,7 @@ class TestChess(unittest.TestCase):
         )
 
     def test_double_move_pawn_still_stop_by_piece(self):
-        board = Board()
+        board = BoardFactory.with_pawns()
 
         # move white pawn
         board.move(6, 3, 4, 3)
@@ -361,7 +361,7 @@ class TestChess(unittest.TestCase):
         )
 
     def test_double_move_pawn_or_simple(self):
-        board = Board()
+        board = BoardFactory.with_pawns()
 
         # move white pawn
         board.move(6, 3, 4, 3)
