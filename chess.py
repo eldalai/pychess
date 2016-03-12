@@ -176,6 +176,11 @@ class Rook(Piece):
         raise MoveException()
 
 
+class Horse(Piece):
+    PIECE_LETTER = 'h'
+    INITIAL_COLUMN = 1
+
+
 class BoardFactory(object):
 
     @classmethod
@@ -198,6 +203,16 @@ class BoardFactory(object):
             board.set_position(black_rook, BIG_PIECES_INITIAL_ROW[BLACK], col)
         return board
 
+
+    @classmethod
+    def with_horses(cls):
+        board = Board()
+        for col in (Horse.INITIAL_COLUMN, CHESS_BOARD_SIZE - Horse.INITIAL_COLUMN - 1,):
+            white_horse = Horse(board=board, color=WHITE)
+            board.set_position(white_horse, BIG_PIECES_INITIAL_ROW[WHITE], col)
+            black_horse = Horse(board=board, color=BLACK)
+            board.set_position(black_horse, BIG_PIECES_INITIAL_ROW[BLACK], col)
+        return board
 
 class Board(object):
 

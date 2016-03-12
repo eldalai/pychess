@@ -695,5 +695,52 @@ class TestRooks(unittest.TestCase):
             expected_board
         )
 
+    def test_invalid_move_rook_another_in_middle(self):
+        board = BoardFactory.with_rooks()
+        # move white rook a little
+        board.move(7, 0, 5, 0)
+        with self.assertRaises(MoveException):
+            # try move black over white rook
+            board.move(0, 7, 7, 0)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|r      r|\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|R       |\n'\
+            '7|        |\n'\
+            '8|       R|\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+
+class TestHorses(unittest.TestCase):
+
+    def test_board_with_horses(self):
+        board = BoardFactory.with_horses()
+        expected_board = \
+            'B*12345678*\n' \
+            '1| h    h |\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|        |\n'\
+            '8| H    H |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
 if __name__ == '__main__':
     unittest.main()
