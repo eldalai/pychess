@@ -638,5 +638,62 @@ class TestRooks(unittest.TestCase):
             str(board),
             expected_board
         )
+
+    def test_simple_move_rook_twice_black_again(self):
+        board = BoardFactory.with_rooks()
+
+        # move white rook up
+        board.move(7, 0, 6, 0)
+        # try to move black pawn again
+        with self.assertRaises(InvalidTurnException):
+            board.move(6, 0, 5, 0)
+
+        # move black rook down
+        board.move(0, 0, 1, 0)
+        # try to move black pawn again
+        with self.assertRaises(InvalidTurnException):
+            board.move(1, 0, 2, 0)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|       r|\n'\
+            '2|r       |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|R       |\n'\
+            '8|       R|\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_rook_eat_rook(self):
+        board = BoardFactory.with_rooks()
+        # white rook eat black rook
+        board.move(7, 0, 0, 0)
+        # black rook eat white rook
+        board.move(0, 7, 7, 7)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|R       |\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|        |\n'\
+            '8|       r|\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
 if __name__ == '__main__':
     unittest.main()
