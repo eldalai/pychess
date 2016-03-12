@@ -1,9 +1,16 @@
 WHITE = 'white'
 BLACK = 'black'
 
+CHESS_BOARD_SIZE = 8
+
 PAWN_INITIAL_ROW = {
     WHITE: 6,
     BLACK: 1,
+}
+
+BIG_PIECES_INITIAL_ROW = {
+    WHITE: 7,
+    BLACK: 0,
 }
 
 
@@ -101,9 +108,6 @@ class Pawn(Piece):
         BLACK: +1,
     }
 
-    def __init__(self, board, color):
-        super(Pawn, self).__init__(board, color)
-
     def move(self, to_row, to_col):
         # simple move
         if(
@@ -150,16 +154,30 @@ class Pawn(Piece):
         raise MoveException()
 
 
+class Rook(Piece):
+    PIECE_LETTER = 'r'
+
+
 class BoardFactory(object):
 
     @classmethod
     def with_pawns(cls):
         board = Board()
-        for col in xrange(0, 8):
+        for col in xrange(0, CHESS_BOARD_SIZE):
             white_pawn = Pawn(board=board, color=WHITE)
             board.set_position(white_pawn, PAWN_INITIAL_ROW[WHITE], col)
             black_pawn = Pawn(board=board, color=BLACK)
             board.set_position(black_pawn, PAWN_INITIAL_ROW[BLACK], col)
+        return board
+
+    @classmethod
+    def with_rooks(cls):
+        board = Board()
+        for col in (0, CHESS_BOARD_SIZE - 1,):
+            white_rook = Rook(board=board, color=WHITE)
+            board.set_position(white_rook, BIG_PIECES_INITIAL_ROW[WHITE], col)
+            black_rook = Rook(board=board, color=BLACK)
+            board.set_position(black_rook, BIG_PIECES_INITIAL_ROW[BLACK], col)
         return board
 
 
@@ -167,7 +185,10 @@ class Board(object):
 
     def __init__(self):
         self.actual_turn = WHITE
-        self._board = [[Cell(board=self, row=j, col=i) for i in range(8)] for j in range(8)]
+        self._board = [
+            [Cell(board=self, row=j, col=i) for i in range(CHESS_BOARD_SIZE)]
+            for j in range(CHESS_BOARD_SIZE)
+        ]
 
     def get_position(self, row, col):
         return self._board[row][col]
@@ -177,7 +198,7 @@ class Board(object):
 
     def move(self, from_row, from_col, to_row, to_col):
         for arg in [from_row, from_col, to_row, to_col]:
-            if arg < 0 or arg > 7:
+            if arg < 0 or arg > CHESS_BOARD_SIZE - 1:
                 raise InvalidArgumentException()
         self.get_position(from_row, from_col).move(to_row, to_col)
         if self.actual_turn == WHITE:
@@ -191,9 +212,9 @@ class Board(object):
 
     def __str__(self):
         _str = 'B*12345678*\n'
-        for row in xrange(0, 8):
+        for row in xrange(0, CHESS_BOARD_SIZE):
             _str += '%d|' % (row + 1)
-            for col in xrange(0, 8):
+            for col in xrange(0, CHESS_BOARD_SIZE):
                 _str += str(self._board[row][col])
             _str += '|\n'
 
