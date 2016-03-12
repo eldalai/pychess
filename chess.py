@@ -181,6 +181,11 @@ class Horse(Piece):
     INITIAL_COLUMN = 1
 
 
+class Bishop(Piece):
+    PIECE_LETTER = 'b'
+    INITIAL_COLUMN = 2
+
+
 class BoardFactory(object):
 
     @classmethod
@@ -213,6 +218,17 @@ class BoardFactory(object):
             black_horse = Horse(board=board, color=BLACK)
             board.set_position(black_horse, BIG_PIECES_INITIAL_ROW[BLACK], col)
         return board
+
+    @classmethod
+    def with_bishops(cls):
+        board = Board()
+        for col in (Bishop.INITIAL_COLUMN, CHESS_BOARD_SIZE - Bishop.INITIAL_COLUMN - 1,):
+            white_bishop = Bishop(board=board, color=WHITE)
+            board.set_position(white_bishop, BIG_PIECES_INITIAL_ROW[WHITE], col)
+            black_bishop = Bishop(board=board, color=BLACK)
+            board.set_position(black_bishop, BIG_PIECES_INITIAL_ROW[BLACK], col)
+        return board
+
 
 class Board(object):
 
