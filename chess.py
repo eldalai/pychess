@@ -186,6 +186,11 @@ class Bishop(Piece):
     INITIAL_COLUMN = 2
 
 
+class Queen(Piece):
+    PIECE_LETTER = 'q'
+    INITIAL_COLUMN = 3
+
+
 class BoardFactory(object):
 
     @classmethod
@@ -227,6 +232,15 @@ class BoardFactory(object):
             board.set_position(white_bishop, BIG_PIECES_INITIAL_ROW[WHITE], col)
             black_bishop = Bishop(board=board, color=BLACK)
             board.set_position(black_bishop, BIG_PIECES_INITIAL_ROW[BLACK], col)
+        return board
+
+    @classmethod
+    def with_queen(cls):
+        board = Board()
+        white_queen = Queen(board=board, color=WHITE)
+        board.set_position(white_queen, BIG_PIECES_INITIAL_ROW[WHITE], Queen.INITIAL_COLUMN)
+        black_queen = Queen(board=board, color=BLACK)
+        board.set_position(black_queen, BIG_PIECES_INITIAL_ROW[BLACK], Queen.INITIAL_COLUMN)
         return board
 
 

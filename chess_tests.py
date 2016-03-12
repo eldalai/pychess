@@ -763,5 +763,28 @@ class TestBishops(unittest.TestCase):
             str(board),
             expected_board
         )
+
+
+class TestQueens(unittest.TestCase):
+
+    def test_board_with_queen(self):
+        board = BoardFactory.with_queen()
+        expected_board = \
+            'B*12345678*\n' \
+            '1|   q    |\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|        |\n'\
+            '8|   Q    |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
 if __name__ == '__main__':
     unittest.main()
