@@ -1,6 +1,7 @@
 import unittest
 
 from chess import (
+    Board,
     BoardFactory,
     CellEmptyException,
     CellNotEmptyException,
@@ -10,19 +11,19 @@ from chess import (
 )
 
 
-class TestChess(unittest.TestCase):
+class TestBoard(unittest.TestCase):
 
-    def test_board_with_pawns(self):
-        board = BoardFactory.with_pawns()
+    def test_empty_board(self):
+        board = Board()
         expected_board = \
             'B*12345678*\n' \
             '1|        |\n'\
-            '2|pppppppp|\n'\
+            '2|        |\n'\
             '3|        |\n'\
             '4|        |\n'\
             '5|        |\n'\
             '6|        |\n'\
-            '7|PPPPPPPP|\n'\
+            '7|        |\n'\
             '8|        |\n'\
             'W*--------*\n'
 
@@ -50,6 +51,28 @@ class TestChess(unittest.TestCase):
 
         with self.assertRaises(InvalidArgumentException):
             board.move(6, 3, 5, -4)
+
+
+class TestPawns(unittest.TestCase):
+
+    def test_board_with_pawns(self):
+        board = BoardFactory.with_pawns()
+        expected_board = \
+            'B*12345678*\n' \
+            '1|        |\n'\
+            '2|pppppppp|\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|PPPPPPPP|\n'\
+            '8|        |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
 
     def test_try_move_unexistence_pawn(self):
         board = BoardFactory.with_pawns()
