@@ -32,12 +32,15 @@ class InvalidArgumentException(MoveException):
 
 
 class Cell(object):
-    def __init__(self, board):
+    def __init__(self, board, row, col):
         self._piece = None
         self._board = board
+        self.row = row
+        self.col = col
 
     def set_piece(self, piece):
         self._piece = piece
+        piece.set_cell(self)
 
     @property
     def piece(self):
@@ -73,6 +76,17 @@ class Piece(object):
         self.board = board
         self.color = color
 
+    def set_cell(self, cell):
+        self._cell = cell
+
+    @property
+    def row(self):
+        return self._cell.row
+
+    @property
+    def col(self):
+        return self._cell.col
+
     def __str__(self):
         if self.color == WHITE:
             return self.PIECE_LETTER.upper()
@@ -91,11 +105,10 @@ class Pawn(Piece):
         super(Pawn, self).__init__(board, color)
 
     def move(self, to_row, to_col):
-        actual_position = self.board.get_piece_position(self)
         # simple move
         if(
-            to_col == actual_position.col and
-            to_row == (actual_position.row + self.COLOR_DIRECTION[self.color])
+            to_col == self.col and
+            to_row == (self.row + self.COLOR_DIRECTION[self.color])
         ):
             if not self.board.get_position(to_row, to_col).is_empty:
                 raise CellNotEmptyException()
@@ -105,9 +118,9 @@ class Pawn(Piece):
 
         # double initial move
         if(
-            to_col == actual_position.col and
-            to_row == (actual_position.row + self.COLOR_DIRECTION[self.color] * 2) and
-            actual_position.row == PAWN_INITIAL_ROW[self.color]
+            to_col == self.col and
+            to_row == (self.row + self.COLOR_DIRECTION[self.color] * 2) and
+            self.row == PAWN_INITIAL_ROW[self.color]
         ):
             if not self.board.get_position(to_row, to_col).is_empty:
                 raise CellNotEmptyException()
@@ -120,10 +133,10 @@ class Pawn(Piece):
         # eat
         if(
             (
-                to_col == actual_position.col - 1 or
-                to_col == actual_position.col + 1
+                to_col == self.col - 1 or
+                to_col == self.col + 1
             ) and
-            to_row == (actual_position.row + self.COLOR_DIRECTION[self.color])
+            to_row == (self.row + self.COLOR_DIRECTION[self.color])
         ):
             if self.board.get_position(to_row, to_col).is_empty:
                 raise CellEmptyException()
@@ -137,18 +150,11 @@ class Pawn(Piece):
         raise MoveException()
 
 
-class Position(object):
-
-    def __init__(self, row, col):
-        self.row = row
-        self.col = col
-
-
 class Board(object):
 
     def __init__(self):
         self.actual_turn = WHITE
-        self._board = [[Cell(board=self) for i in range(8)] for j in range(8)]
+        self._board = [[Cell(board=self, row=j, col=i) for i in range(8)] for j in range(8)]
         for col in xrange(0, 8):
             white_pawn = Pawn(board=self, color=WHITE)
             self.set_position(white_pawn, PAWN_INITIAL_ROW[WHITE], col)
@@ -157,12 +163,6 @@ class Board(object):
 
     def get_position(self, row, col):
         return self._board[row][col]
-
-    def get_piece_position(self, piece):
-        for row in range(8):
-            for col in range(8):
-                if self.get_position(row, col).piece == piece:
-                    return Position(row=row, col=col)
 
     def set_position(self, piece, row, col):
         self.get_position(row, col).set_piece(piece)
@@ -178,8 +178,7 @@ class Board(object):
             self.actual_turn = WHITE
 
     def set_piece(self, piece, to_row, to_col):
-        actual_position = self.get_piece_position(piece)
-        self.get_position(actual_position.row, actual_position.col).set_empty()
+        self.get_position(piece.row, piece.col).set_empty()
         self.set_position(piece, to_row, to_col)
 
     def __str__(self):
