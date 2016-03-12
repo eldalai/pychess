@@ -436,6 +436,28 @@ class TestRooks(unittest.TestCase):
             expected_board
         )
 
+    def test_simple_move_rook_up(self):
+        board = BoardFactory.with_rooks()
+
+        board.move(7, 0, 6, 0)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|r      r|\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|R       |\n'\
+            '8|       R|\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
 
 if __name__ == '__main__':
     unittest.main()

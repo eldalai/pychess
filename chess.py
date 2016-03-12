@@ -148,7 +148,6 @@ class Pawn(Piece):
                 raise InvalidEatException()
 
             self.board.set_piece(self, to_row, to_col)
-            self.initial_move = False
             return
 
         raise MoveException()
@@ -156,6 +155,17 @@ class Pawn(Piece):
 
 class Rook(Piece):
     PIECE_LETTER = 'r'
+    INITIAL_COLUMN = 0
+
+    def move(self, to_row, to_col):
+        if(
+            (self.row == to_row and self.col != to_col) or
+            (self.row != to_row and self.col == to_col)
+        ):
+            self.board.set_piece(self, to_row, to_col)
+            return
+
+        raise MoveException()
 
 
 class BoardFactory(object):
@@ -173,7 +183,7 @@ class BoardFactory(object):
     @classmethod
     def with_rooks(cls):
         board = Board()
-        for col in (0, CHESS_BOARD_SIZE - 1,):
+        for col in (Rook.INITIAL_COLUMN, CHESS_BOARD_SIZE - Rook.INITIAL_COLUMN - 1,):
             white_rook = Rook(board=board, color=WHITE)
             board.set_position(white_rook, BIG_PIECES_INITIAL_ROW[WHITE], col)
             black_rook = Rook(board=board, color=BLACK)
