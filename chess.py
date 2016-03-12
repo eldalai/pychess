@@ -191,6 +191,11 @@ class Queen(Piece):
     INITIAL_COLUMN = 3
 
 
+class King(Piece):
+    PIECE_LETTER = 'k'
+    INITIAL_COLUMN = 4
+
+
 class BoardFactory(object):
 
     @classmethod
@@ -235,12 +240,22 @@ class BoardFactory(object):
         return board
 
     @classmethod
-    def with_queen(cls):
+    def with_queens(cls):
         board = Board()
         white_queen = Queen(board=board, color=WHITE)
         board.set_position(white_queen, BIG_PIECES_INITIAL_ROW[WHITE], Queen.INITIAL_COLUMN)
         black_queen = Queen(board=board, color=BLACK)
         board.set_position(black_queen, BIG_PIECES_INITIAL_ROW[BLACK], Queen.INITIAL_COLUMN)
+        return board
+
+
+    @classmethod
+    def with_kings(cls):
+        board = Board()
+        white_king = King(board=board, color=WHITE)
+        board.set_position(white_king, BIG_PIECES_INITIAL_ROW[WHITE], King.INITIAL_COLUMN)
+        black_king = King(board=board, color=BLACK)
+        board.set_position(black_king, BIG_PIECES_INITIAL_ROW[BLACK], King.INITIAL_COLUMN)
         return board
 
 

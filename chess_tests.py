@@ -768,7 +768,7 @@ class TestBishops(unittest.TestCase):
 class TestQueens(unittest.TestCase):
 
     def test_board_with_queen(self):
-        board = BoardFactory.with_queen()
+        board = BoardFactory.with_queens()
         expected_board = \
             'B*12345678*\n' \
             '1|   q    |\n'\
@@ -779,6 +779,28 @@ class TestQueens(unittest.TestCase):
             '6|        |\n'\
             '7|        |\n'\
             '8|   Q    |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+
+class TestKings(unittest.TestCase):
+
+    def test_board_with_king(self):
+        board = BoardFactory.with_kings()
+        expected_board = \
+            'B*12345678*\n' \
+            '1|    k   |\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|        |\n'\
+            '8|    K   |\n'\
             'W*--------*\n'
 
         self.assertEquals(
