@@ -1,14 +1,18 @@
 import unittest
 
 from chess import (
+    WHITE,
+    BLACK,
     Board,
     BoardFactory,
     CellEmptyException,
     CellNotEmptyException,
     InvalidArgumentException,
     InvalidEatException,
+    InvalidMoveException,
     InvalidTurnException,
-    MoveException,
+    ChessException,
+    Pawn,
 )
 
 
@@ -320,7 +324,6 @@ class TestPawns(unittest.TestCase):
             # black pawn try eat same color
             board.move(1, 5, 2, 4)
 
-
         expected_board = \
             'B*12345678*\n' \
             '1|        |\n'\
@@ -337,6 +340,7 @@ class TestPawns(unittest.TestCase):
             str(board),
             expected_board
         )
+
     def test_double_initial_move_pawn(self):
         board = BoardFactory.with_pawns()
         # move white pawn
@@ -365,11 +369,11 @@ class TestPawns(unittest.TestCase):
         board.move(6, 3, 4, 3)
         # double move black pawn
         board.move(1, 4, 3, 4)
-        with self.assertRaises(MoveException):
+        with self.assertRaises(InvalidMoveException):
             # double move white pawn
             board.move(4, 3, 2, 3)
         board.move(4, 3, 3, 3)
-        with self.assertRaises(MoveException):
+        with self.assertRaises(InvalidMoveException):
             # double move white pawn
             board.move(3, 4, 5, 4)
         board.move(3, 4, 4, 4)
@@ -526,8 +530,8 @@ class TestRooks(unittest.TestCase):
     def test_try_invalid_diagonal_move_rook(self):
         board = BoardFactory.with_rooks()
 
-        with self.assertRaises(MoveException):
-            board.move(0, 0, 1, 1)
+        with self.assertRaises(InvalidMoveException):
+            board.move(7, 0, 6, 1)
 
         expected_board = \
             'B*12345678*\n' \
@@ -549,8 +553,8 @@ class TestRooks(unittest.TestCase):
     def test_try_invalid_move_rook(self):
         board = BoardFactory.with_rooks()
 
-        with self.assertRaises(MoveException):
-            board.move(0, 0, 5, 4)
+        with self.assertRaises(InvalidMoveException):
+            board.move(7, 0, 5, 4)
 
         expected_board = \
             'B*12345678*\n' \
@@ -699,7 +703,7 @@ class TestRooks(unittest.TestCase):
         board = BoardFactory.with_rooks()
         # move white rook a little
         board.move(7, 0, 5, 0)
-        with self.assertRaises(MoveException):
+        with self.assertRaises(InvalidMoveException):
             # try move black over white rook
             board.move(0, 7, 7, 0)
 
@@ -764,6 +768,314 @@ class TestBishops(unittest.TestCase):
             expected_board
         )
 
+    def test_try_move_unexistence_bishop(self):
+        board = BoardFactory.with_bishops()
+
+        with self.assertRaises(CellEmptyException):
+            board.move(1, 1, 1, 1)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|  b  b  |\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|        |\n'\
+            '8|  B  B  |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_try_invalid_color_move_bishop(self):
+        board = BoardFactory.with_bishops()
+
+        with self.assertRaises(InvalidTurnException):
+            board.move(0, 2, 1, 1)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|  b  b  |\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|        |\n'\
+            '8|  B  B  |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_try_invalid_horizontal_move_bishop(self):
+        board = BoardFactory.with_bishops()
+
+        with self.assertRaises(InvalidMoveException):
+            board.move(7, 2, 7, 1)
+        with self.assertRaises(InvalidMoveException):
+            board.move(7, 2, 7, 3)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|  b  b  |\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|        |\n'\
+            '8|  B  B  |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_try_invalid_vertical_move_bishop(self):
+        board = BoardFactory.with_bishops()
+
+        with self.assertRaises(InvalidMoveException):
+            board.move(7, 2, 6, 2)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|  b  b  |\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|        |\n'\
+            '8|  B  B  |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_try_invalid_move_bishop(self):
+        board = BoardFactory.with_bishops()
+
+        with self.assertRaises(InvalidMoveException):
+            board.move(7, 2, 5, 5)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|  b  b  |\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|        |\n'\
+            '8|  B  B  |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_try_invalid_same_color_move_bishop(self):
+        board = BoardFactory.with_pawns()
+        board = BoardFactory.with_bishops(board)
+
+        with self.assertRaises(InvalidEatException):
+            board.move(7, 2, 6, 1)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|  b  b  |\n'\
+            '2|pppppppp|\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|PPPPPPPP|\n'\
+            '8|  B  B  |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_simple_move_bishop(self):
+        board = BoardFactory.with_bishops()
+
+        board.move(7, 2, 6, 1)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|  b  b  |\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7| B      |\n'\
+            '8|     B  |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_simple_move_twice_bishop(self):
+        board = BoardFactory.with_bishops()
+
+        # move white bishop up
+        board.move(7, 2, 6, 1)
+        # move black bishop down
+        board.move(0, 2, 1, 1)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|     b  |\n'\
+            '2| b      |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7| B      |\n'\
+            '8|     B  |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_simple_move_bishop_twice_black_again(self):
+        board = BoardFactory.with_bishops()
+
+        # move white bishop
+        board.move(7, 2, 6, 1)
+        # try to move white bishop again
+        with self.assertRaises(InvalidTurnException):
+            board.move(6, 1, 5, 2)
+
+        # move black bishop down
+        board.move(0, 2, 1, 1)
+        # try to move black bishop again
+        with self.assertRaises(InvalidTurnException):
+            board.move(1, 1, 2, 2)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|     b  |\n'\
+            '2| b      |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7| B      |\n'\
+            '8|     B  |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_bishop_eat_bishop(self):
+        board = BoardFactory.with_bishops()
+
+        black_pawn = Pawn(board=board, color=BLACK)
+        board.set_position(black_pawn, 6, 1)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|  b  b  |\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7| p      |\n'\
+            '8|  B  B  |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+        # move white bishop
+        board.move(7, 2, 6, 1)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|  b  b  |\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7| B      |\n'\
+            '8|     B  |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_invalid_move_bishop_another_in_middle(self):
+        board = BoardFactory.with_bishops()
+
+        white_pawn = Pawn(board=board, color=WHITE)
+        board.set_position(white_pawn, 6, 1)
+        black_pawn = Pawn(board=board, color=BLACK)
+        board.set_position(black_pawn, 5, 0)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|  b  b  |\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|p       |\n'\
+            '7| P      |\n'\
+            '8|  B  B  |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+        # move white bishop
+        with self.assertRaises(InvalidMoveException):
+            board.move(7, 2, 5, 0)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|  b  b  |\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|p       |\n'\
+            '7| P      |\n'\
+            '8|  B  B  |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
 
 class TestQueens(unittest.TestCase):
 

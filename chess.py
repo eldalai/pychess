@@ -14,27 +14,31 @@ BIG_PIECES_INITIAL_ROW = {
 }
 
 
-class MoveException(Exception):
+class ChessException(Exception):
     pass
 
 
-class CellEmptyException(MoveException):
+class CellEmptyException(ChessException):
     pass
 
 
-class CellNotEmptyException(MoveException):
+class CellNotEmptyException(ChessException):
     pass
 
 
-class InvalidTurnException(MoveException):
+class InvalidTurnException(ChessException):
     pass
 
 
-class InvalidEatException(MoveException):
+class InvalidMoveException(ChessException):
     pass
 
 
-class InvalidArgumentException(MoveException):
+class InvalidEatException(ChessException):
+    pass
+
+
+class InvalidArgumentException(ChessException):
     pass
 
 
@@ -117,7 +121,7 @@ class Pawn(Piece):
             if not self.board.get_position(to_row, to_col).is_empty:
                 raise CellNotEmptyException()
 
-            self.board.set_piece(self, to_row, to_col)
+            self.board.move_piece(self, to_row, to_col)
             return
 
         # double initial move
@@ -131,7 +135,7 @@ class Pawn(Piece):
             if not self.board.get_position(to_row - self.COLOR_DIRECTION[self.color], to_col).is_empty:
                 raise CellNotEmptyException()
 
-            self.board.set_piece(self, to_row, to_col)
+            self.board.move_piece(self, to_row, to_col)
             return
 
         # eat
@@ -147,10 +151,10 @@ class Pawn(Piece):
             if self.board.get_position(to_row, to_col).piece.color == self.color:
                 raise InvalidEatException()
 
-            self.board.set_piece(self, to_row, to_col)
+            self.board.move_piece(self, to_row, to_col)
             return
 
-        raise MoveException()
+        raise InvalidMoveException()
 
 
 class Rook(Piece):
@@ -170,10 +174,10 @@ class Rook(Piece):
             ):
                 raise InvalidEatException()
 
-            self.board.set_piece(self, to_row, to_col)
+            self.board.move_piece(self, to_row, to_col)
             return
 
-        raise MoveException()
+        raise InvalidMoveException()
 
 
 class Horse(Piece):
@@ -184,6 +188,21 @@ class Horse(Piece):
 class Bishop(Piece):
     PIECE_LETTER = 'b'
     INITIAL_COLUMN = 2
+
+    def move(self, to_row, to_col):
+        if abs(self.row - to_row) == abs(self.col - to_col):
+            destiny_cell = self.board.get_position(to_row, to_col)
+            # eat
+            if(
+                not destiny_cell.is_empty and
+                destiny_cell.piece.color == self.color
+            ):
+                raise InvalidEatException()
+
+            self.board.move_piece(self, to_row, to_col)
+            return
+
+        raise InvalidMoveException()
 
 
 class Queen(Piece):
@@ -199,8 +218,9 @@ class King(Piece):
 class BoardFactory(object):
 
     @classmethod
-    def with_pawns(cls):
-        board = Board()
+    def with_pawns(cls, board=None):
+        if not board:
+            board = Board()
         for col in xrange(0, CHESS_BOARD_SIZE):
             white_pawn = Pawn(board=board, color=WHITE)
             board.set_position(white_pawn, PAWN_INITIAL_ROW[WHITE], col)
@@ -209,8 +229,9 @@ class BoardFactory(object):
         return board
 
     @classmethod
-    def with_rooks(cls):
-        board = Board()
+    def with_rooks(cls, board=None):
+        if not board:
+            board = Board()
         for col in (Rook.INITIAL_COLUMN, CHESS_BOARD_SIZE - Rook.INITIAL_COLUMN - 1,):
             white_rook = Rook(board=board, color=WHITE)
             board.set_position(white_rook, BIG_PIECES_INITIAL_ROW[WHITE], col)
@@ -220,8 +241,9 @@ class BoardFactory(object):
 
 
     @classmethod
-    def with_horses(cls):
-        board = Board()
+    def with_horses(cls, board=None):
+        if not board:
+            board = Board()
         for col in (Horse.INITIAL_COLUMN, CHESS_BOARD_SIZE - Horse.INITIAL_COLUMN - 1,):
             white_horse = Horse(board=board, color=WHITE)
             board.set_position(white_horse, BIG_PIECES_INITIAL_ROW[WHITE], col)
@@ -230,8 +252,9 @@ class BoardFactory(object):
         return board
 
     @classmethod
-    def with_bishops(cls):
-        board = Board()
+    def with_bishops(cls, board=None):
+        if not board:
+            board = Board()
         for col in (Bishop.INITIAL_COLUMN, CHESS_BOARD_SIZE - Bishop.INITIAL_COLUMN - 1,):
             white_bishop = Bishop(board=board, color=WHITE)
             board.set_position(white_bishop, BIG_PIECES_INITIAL_ROW[WHITE], col)
@@ -240,8 +263,9 @@ class BoardFactory(object):
         return board
 
     @classmethod
-    def with_queens(cls):
-        board = Board()
+    def with_queens(cls, board=None):
+        if not board:
+            board = Board()
         white_queen = Queen(board=board, color=WHITE)
         board.set_position(white_queen, BIG_PIECES_INITIAL_ROW[WHITE], Queen.INITIAL_COLUMN)
         black_queen = Queen(board=board, color=BLACK)
@@ -250,8 +274,9 @@ class BoardFactory(object):
 
 
     @classmethod
-    def with_kings(cls):
-        board = Board()
+    def with_kings(cls, board=None):
+        if not board:
+            board = Board()
         white_king = King(board=board, color=WHITE)
         board.set_position(white_king, BIG_PIECES_INITIAL_ROW[WHITE], King.INITIAL_COLUMN)
         black_king = King(board=board, color=BLACK)
@@ -284,7 +309,7 @@ class Board(object):
         else:
             self.actual_turn = WHITE
 
-    def set_piece(self, piece, to_row, to_col):
+    def move_piece(self, piece, to_row, to_col):
         self.get_position(piece.row, piece.col).set_empty()
         self.set_position(piece, to_row, to_col)
 
