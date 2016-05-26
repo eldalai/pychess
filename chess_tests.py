@@ -1077,6 +1077,7 @@ class TestBishops(unittest.TestCase):
             expected_board
         )
 
+
 class TestQueens(unittest.TestCase):
 
     def test_board_with_queen(self):
