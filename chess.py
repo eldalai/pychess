@@ -98,6 +98,26 @@ class Piece(object):
     def col(self):
         return self._cell.col
 
+    def is_horizontal_move(self, to_row, to_col):
+        return(
+            (self.row == to_row and self.col != to_col) or
+            (self.row != to_row and self.col == to_col)
+        )
+
+    def is_diagonal_move(self, to_row, to_col):
+        return abs(self.row - to_row) == abs(self.col - to_col)
+
+    def _do_move(self, to_row, to_col, jump=False):
+        destiny_cell = self.board.get_position(to_row, to_col)
+        # eat
+        if(
+            not destiny_cell.is_empty and
+            destiny_cell.piece.color == self.color
+        ):
+            raise InvalidEatException()
+
+        self.board.move_piece(self, to_row, to_col, jump)
+
     def __str__(self):
         if self.color == WHITE:
             return self.PIECE_LETTER.upper()
@@ -146,6 +166,7 @@ class Pawn(Piece):
             ) and
             to_row == (self.row + self.COLOR_DIRECTION[self.color])
         ):
+            # self._do_move(to_row, to_col, eating=True)
             if self.board.get_position(to_row, to_col).is_empty:
                 raise CellEmptyException()
             if self.board.get_position(to_row, to_col).piece.color == self.color:
@@ -162,27 +183,22 @@ class Rook(Piece):
     INITIAL_COLUMN = 0
 
     def move(self, to_row, to_col):
-        if(
-            (self.row == to_row and self.col != to_col) or
-            (self.row != to_row and self.col == to_col)
-        ):
-            destiny_cell = self.board.get_position(to_row, to_col)
-            # eat
-            if(
-                not destiny_cell.is_empty and
-                destiny_cell.piece.color == self.color
-            ):
-                raise InvalidEatException()
-
-            self.board.move_piece(self, to_row, to_col)
-            return
-
-        raise InvalidMoveException()
+        if not self.is_horizontal_move(to_row, to_col):
+            raise InvalidMoveException()
+        self._do_move(to_row, to_col)
 
 
 class Horse(Piece):
     PIECE_LETTER = 'h'
     INITIAL_COLUMN = 1
+
+    def move(self, to_row, to_col):
+        if not (
+            abs(self.row - to_row) == 2 and abs(self.col - to_col) == 1 or
+            abs(self.row - to_row) == 1 and abs(self.col - to_col) == 2
+        ):
+            raise InvalidMoveException()
+        self._do_move(to_row, to_col, jump=True)
 
 
 class Bishop(Piece):
@@ -190,19 +206,9 @@ class Bishop(Piece):
     INITIAL_COLUMN = 2
 
     def move(self, to_row, to_col):
-        if abs(self.row - to_row) == abs(self.col - to_col):
-            destiny_cell = self.board.get_position(to_row, to_col)
-            # eat
-            if(
-                not destiny_cell.is_empty and
-                destiny_cell.piece.color == self.color
-            ):
-                raise InvalidEatException()
-
-            self.board.move_piece(self, to_row, to_col)
-            return
-
-        raise InvalidMoveException()
+        if not self.is_diagonal_move(to_row, to_col):
+            raise InvalidMoveException()
+        self._do_move(to_row, to_col)
 
 
 class Queen(Piece):
@@ -309,26 +315,27 @@ class Board(object):
         else:
             self.actual_turn = WHITE
 
-    def move_piece(self, piece, to_row, to_col):
-        if piece.row == to_row:
-            row_range = [to_row]
-        else:
-            step_row = -1 if piece.row > to_row else 1
-            row_range = range(piece.row, to_row, step_row)
+    def move_piece(self, piece, to_row, to_col, jump=False):
+        if not jump:
+            if piece.row == to_row:
+                row_range = [to_row]
+            else:
+                step_row = -1 if piece.row > to_row else 1
+                row_range = range(piece.row, to_row, step_row)
 
-        if piece.col == to_col:
-            col_range = [to_col]
-        else:
-            step_col = -1 if piece.col > to_col else 1
-            col_range = range(piece.col, to_col, step_col)
+            if piece.col == to_col:
+                col_range = [to_col]
+            else:
+                step_col = -1 if piece.col > to_col else 1
+                col_range = range(piece.col, to_col, step_col)
 
-        for mid_row in row_range:
-            for mid_col in col_range:
-                if(
-                    not(mid_row == piece.row and mid_col == piece.col) and
-                    not self.get_position(mid_row, mid_col).is_empty
-                ):
-                    raise InvalidMoveException()
+            for mid_row in row_range:
+                for mid_col in col_range:
+                    if(
+                        not(mid_row == piece.row and mid_col == piece.col) and
+                        not self.get_position(mid_row, mid_col).is_empty
+                    ):
+                        raise InvalidMoveException()
         self.get_position(piece.row, piece.col).set_empty()
         self.set_position(piece, to_row, to_col)
 

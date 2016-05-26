@@ -818,6 +818,120 @@ class TestHorses(unittest.TestCase):
             expected_board
         )
 
+    def test_try_move_unexistence_horse(self):
+        board = BoardFactory.with_horses()
+
+        with self.assertRaises(CellEmptyException):
+            board.move(1, 1, 1, 1)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1| h    h |\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|        |\n'\
+            '8| H    H |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_try_invalid_color_move_horse(self):
+        board = BoardFactory.with_horses()
+
+        with self.assertRaises(InvalidTurnException):
+            board.move(0, 1, 1, 1)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1| h    h |\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|        |\n'\
+            '8| H    H |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_try_invalid_vertical_move_horse(self):
+        board = BoardFactory.with_horses()
+
+        with self.assertRaises(InvalidMoveException):
+            board.move(7, 1, 6, 1)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1| h    h |\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|        |\n'\
+            '8| H    H |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_simple_move_horse(self):
+        board = BoardFactory.with_horses()
+
+        board.move(7, 1, 5, 2)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1| h    h |\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|  H     |\n'\
+            '7|        |\n'\
+            '8|      H |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_simple_move_horse_with_jump(self):
+        board = BoardFactory.with_horses()
+        BoardFactory.with_pawns(board)
+
+        board.move(7, 1, 5, 2)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1| h    h |\n'\
+            '2|pppppppp|\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|  H     |\n'\
+            '7|PPPPPPPP|\n'\
+            '8|      H |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
 
 class TestBishops(unittest.TestCase):
 
