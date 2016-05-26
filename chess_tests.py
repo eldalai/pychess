@@ -1341,6 +1341,97 @@ class TestQueens(unittest.TestCase):
             expected_board
         )
 
+    def test_try_invalid_color_move_queen(self):
+        board = BoardFactory.with_queens()
+
+        with self.assertRaises(InvalidTurnException):
+            board.move(0, 3, 1, 1)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|   q    |\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|        |\n'\
+            '8|   Q    |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_try_horizontal_move(self):
+        board = BoardFactory.with_queens()
+
+        board.move(7, 3, 7, 1)
+        board.move(0, 3, 0, 7)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|       q|\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|        |\n'\
+            '8| Q      |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_try_vertical_move_queen(self):
+        board = BoardFactory.with_queens()
+
+        board.move(7, 3, 6, 3)
+        board.move(0, 3, 3, 3)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|        |\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|   q    |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|   Q    |\n'\
+            '8|        |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_try_diagonal_move_queen(self):
+        board = BoardFactory.with_queens()
+
+        board.move(7, 3, 5, 5)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|   q    |\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|     Q  |\n'\
+            '7|        |\n'\
+            '8|        |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
 
 class TestKings(unittest.TestCase):
 

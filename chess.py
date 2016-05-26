@@ -212,6 +212,14 @@ class Queen(Piece):
     PIECE_LETTER = 'q'
     INITIAL_COLUMN = 3
 
+    def move(self, to_row, to_col):
+        if(
+            not self.is_diagonal_move(to_row, to_col) and
+            not self.is_horizontal_move(to_row, to_col)
+        ):
+            raise InvalidMoveException()
+        self._do_move(to_row, to_col)
+
 
 class King(Piece):
     PIECE_LETTER = 'k'
