@@ -107,8 +107,25 @@ class Piece(object):
     def is_diagonal_move(self, to_row, to_col):
         return abs(self.row - to_row) == abs(self.col - to_col)
 
-    def _do_move(self, to_row, to_col, jump=False):
+    def _do_move(
+        self,
+        to_row,
+        to_col,
+        jump=False,
+        should_eat=False,
+        should_not_eat=False,
+    ):
         destiny_cell = self.board.get_position(to_row, to_col)
+        if(
+            destiny_cell.is_empty and
+            should_eat
+        ):
+            raise CellEmptyException
+        if(
+            not destiny_cell.is_empty and
+            should_not_eat
+        ):
+            raise CellNotEmptyException
         # eat
         if(
             not destiny_cell.is_empty and
@@ -138,11 +155,7 @@ class Pawn(Piece):
             to_col == self.col and
             to_row == (self.row + self.COLOR_DIRECTION[self.color])
         ):
-            if not self.board.get_position(to_row, to_col).is_empty:
-                raise CellNotEmptyException()
-
-            self.board.move_piece(self, to_row, to_col)
-            return
+            return self._do_move(to_row, to_col, should_not_eat=True)
 
         # double initial move
         if(
@@ -150,30 +163,14 @@ class Pawn(Piece):
             to_row == (self.row + self.COLOR_DIRECTION[self.color] * 2) and
             self.row == PAWN_INITIAL_ROW[self.color]
         ):
-            if not self.board.get_position(to_row, to_col).is_empty:
-                raise CellNotEmptyException()
-            if not self.board.get_position(to_row - self.COLOR_DIRECTION[self.color], to_col).is_empty:
-                raise CellNotEmptyException()
-
-            self.board.move_piece(self, to_row, to_col)
-            return
+            return self._do_move(to_row, to_col, should_not_eat=True)
 
         # eat
         if(
-            (
-                to_col == self.col - 1 or
-                to_col == self.col + 1
-            ) and
+            abs(to_col - self.col) == 1 and
             to_row == (self.row + self.COLOR_DIRECTION[self.color])
         ):
-            # self._do_move(to_row, to_col, eating=True)
-            if self.board.get_position(to_row, to_col).is_empty:
-                raise CellEmptyException()
-            if self.board.get_position(to_row, to_col).piece.color == self.color:
-                raise InvalidEatException()
-
-            self.board.move_piece(self, to_row, to_col)
-            return
+            return self._do_move(to_row, to_col, should_eat=True)
 
         raise InvalidMoveException()
 
