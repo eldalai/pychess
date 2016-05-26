@@ -1457,5 +1457,74 @@ class TestKings(unittest.TestCase):
             expected_board
         )
 
+    def test_try_horizontal_move(self):
+        board = BoardFactory.with_kings()
+
+        board.move(7, 4, 7, 3)
+        board.move(0, 4, 0, 5)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|     k  |\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|        |\n'\
+            '8|   K    |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_try_vertical_move_queen(self):
+        board = BoardFactory.with_kings()
+
+        board.move(7, 4, 6, 4)
+        board.move(0, 4, 1, 4)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|        |\n'\
+            '2|    k   |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|    K   |\n'\
+            '8|        |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_try_diagonal_move_king(self):
+        board = BoardFactory.with_kings()
+
+        board.move(7, 4, 6, 3)
+        board.move(0, 4, 1, 5)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|        |\n'\
+            '2|     k  |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|   K    |\n'\
+            '8|        |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
 if __name__ == '__main__':
     unittest.main()
