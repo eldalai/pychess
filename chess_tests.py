@@ -932,6 +932,62 @@ class TestHorses(unittest.TestCase):
             expected_board
         )
 
+        board.move(0, 1, 2, 0)
+        expected_board = \
+            'B*12345678*\n' \
+            '1|      h |\n'\
+            '2|pppppppp|\n'\
+            '3|h       |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|  H     |\n'\
+            '7|PPPPPPPP|\n'\
+            '8|      H |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+        board.move(5, 2, 3, 1)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|      h |\n'\
+            '2|pppppppp|\n'\
+            '3|h       |\n'\
+            '4| H      |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|PPPPPPPP|\n'\
+            '8|      H |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+        board.move(2, 0, 3, 2)
+        board.move(3, 1, 2, 3)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|      h |\n'\
+            '2|pppppppp|\n'\
+            '3|   H    |\n'\
+            '4|  h     |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|PPPPPPPP|\n'\
+            '8|      H |\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
 
 class TestBishops(unittest.TestCase):
 
