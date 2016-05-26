@@ -225,6 +225,16 @@ class King(Piece):
     PIECE_LETTER = 'k'
     INITIAL_COLUMN = 4
 
+    def move(self, to_row, to_col):
+        if(
+            not self.is_diagonal_move(to_row, to_col) and
+            not self.is_horizontal_move(to_row, to_col) and
+            abs(self.row - to_row) > 1 and
+            abs(self.col - to_col) > 1
+        ):
+            raise InvalidMoveException()
+        self._do_move(to_row, to_col)
+
 
 class BoardFactory(object):
 
@@ -311,6 +321,8 @@ class Board(object):
         self.get_position(row, col).set_piece(piece)
 
     def move(self, from_row, from_col, to_row, to_col):
+        if from_row == to_row and to_col == from_col:
+            raise InvalidArgumentException()
         for arg in [from_row, from_col, to_row, to_col]:
             if arg < 0 or arg > CHESS_BOARD_SIZE - 1:
                 raise InvalidArgumentException()

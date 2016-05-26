@@ -57,6 +57,9 @@ class TestBoard(unittest.TestCase):
         with self.assertRaises(InvalidArgumentException):
             board.move(6, 3, 5, -4)
 
+        with self.assertRaises(InvalidArgumentException):
+            board.move(6, 3, 6, 3)
+
 
 class TestPawns(unittest.TestCase):
 
@@ -485,7 +488,7 @@ class TestRooks(unittest.TestCase):
         board = BoardFactory.with_rooks()
 
         with self.assertRaises(CellEmptyException):
-            board.move(1, 1, 1, 1)
+            board.move(1, 1, 2, 2)
 
         expected_board = \
             'B*12345678*\n' \
@@ -822,7 +825,7 @@ class TestHorses(unittest.TestCase):
         board = BoardFactory.with_horses()
 
         with self.assertRaises(CellEmptyException):
-            board.move(1, 1, 1, 1)
+            board.move(1, 1, 2, 2)
 
         expected_board = \
             'B*12345678*\n' \
@@ -1014,7 +1017,7 @@ class TestBishops(unittest.TestCase):
         board = BoardFactory.with_bishops()
 
         with self.assertRaises(CellEmptyException):
-            board.move(1, 1, 1, 1)
+            board.move(1, 1, 2, 2)
 
         expected_board = \
             'B*12345678*\n' \
