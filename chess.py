@@ -310,12 +310,22 @@ class Board(object):
             self.actual_turn = WHITE
 
     def move_piece(self, piece, to_row, to_col):
-        step_row = -1 if piece.row > to_row else 1
-        step_col = -1 if piece.col > to_col else 1
-        for mid_row in range(piece.row, to_row, step_row):
-            for mid_col in range(piece.col, to_col, step_col):
+        if piece.row == to_row:
+            row_range = [to_row]
+        else:
+            step_row = -1 if piece.row > to_row else 1
+            row_range = range(piece.row, to_row, step_row)
+
+        if piece.col == to_col:
+            col_range = [to_col]
+        else:
+            step_col = -1 if piece.col > to_col else 1
+            col_range = range(piece.col, to_col, step_col)
+
+        for mid_row in row_range:
+            for mid_col in col_range:
                 if(
-                    mid_row != piece.row and mid_col != piece.col and
+                    not(mid_row == piece.row and mid_col == piece.col) and
                     not self.get_position(mid_row, mid_col).is_empty
                 ):
                     raise InvalidMoveException()

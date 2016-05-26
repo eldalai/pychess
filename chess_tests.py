@@ -699,13 +699,13 @@ class TestRooks(unittest.TestCase):
             expected_board
         )
 
-    def test_invalid_move_rook_another_in_middle(self):
+    def test_invalid_move_vertical_rook_another_in_middle(self):
         board = BoardFactory.with_rooks()
-        # move white rook a little
-        board.move(7, 0, 5, 0)
-        with self.assertRaises(InvalidMoveException):
-            # try move black over white rook
-            board.move(0, 7, 7, 0)
+
+        white_pawn = Pawn(board=board, color=WHITE)
+        board.set_position(white_pawn, 6, 0)
+        black_pawn = Pawn(board=board, color=BLACK)
+        board.set_position(black_pawn, 5, 0)
 
         expected_board = \
             'B*12345678*\n' \
@@ -714,9 +714,81 @@ class TestRooks(unittest.TestCase):
             '3|        |\n'\
             '4|        |\n'\
             '5|        |\n'\
-            '6|R       |\n'\
+            '6|p       |\n'\
+            '7|P       |\n'\
+            '8|R      R|\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+        # move white rook a little
+        with self.assertRaises(InvalidMoveException):
+            board.move(7, 0, 5, 0)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|r      r|\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|p       |\n'\
+            '7|P       |\n'\
+            '8|R      R|\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_invalid_move_horizontal_rook_another_in_middle(self):
+        board = BoardFactory.with_rooks()
+
+        white_pawn = Pawn(board=board, color=WHITE)
+        board.set_position(white_pawn, 7, 1)
+        black_pawn = Pawn(board=board, color=BLACK)
+        board.set_position(black_pawn, 7, 2)
+        white_pawn = Pawn(board=board, color=WHITE)
+        board.set_position(white_pawn, 7, 3)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|r      r|\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
             '7|        |\n'\
-            '8|       R|\n'\
+            '8|RPpP   R|\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+        # move white rook a little
+        with self.assertRaises(InvalidMoveException):
+            board.move(7, 0, 7, 2)
+        # move white rook a little
+        with self.assertRaises(InvalidMoveException):
+            board.move(7, 7, 7, 2)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|r      r|\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|        |\n'\
+            '8|RPpP   R|\n'\
             'W*--------*\n'
 
         self.assertEquals(
