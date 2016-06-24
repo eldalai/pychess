@@ -1,5 +1,5 @@
-import os
-from setuptools import setup
+from setuptools import setup, find_packages
+
 
 setup(
     name = "Python Chess",
@@ -7,4 +7,5 @@ setup(
     author = "Gabriel Flores",
     author_email = "eldalai@gmail.com",
     description = ("Python pure chess logic"),
+    package=find_packages(),
 )
