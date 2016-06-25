@@ -7,5 +7,5 @@ setup(
     author="Gabriel Flores",
     author_email="eldalai@gmail.com",
     description=("Python pure chess logic"),
-    package=find_packages(),
+    packages=find_packages(),
 )
