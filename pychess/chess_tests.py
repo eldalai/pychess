@@ -16,6 +16,213 @@ from chess import (
 )
 
 
+class TestBigBoard(unittest.TestCase):
+
+    def test_board_16_16(self):
+        board = Board(size=16)
+        expected_board = \
+            'B*1234567890123456*\n' \
+            '1|                |\n'\
+            '2|                |\n'\
+            '3|                |\n'\
+            '4|                |\n'\
+            '5|                |\n'\
+            '6|                |\n'\
+            '7|                |\n'\
+            '8|                |\n'\
+            '9|                |\n'\
+            '0|                |\n'\
+            '1|                |\n'\
+            '2|                |\n'\
+            '3|                |\n'\
+            '4|                |\n'\
+            '5|                |\n'\
+            '6|                |\n'\
+            'W*----------------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_board_16_16_with_pawns(self):
+        board = BoardFactory.size_16_with_pawns()
+        expected_board = \
+            'B*1234567890123456*\n' \
+            '1|                |\n'\
+            '2|                |\n'\
+            '3|pppppppppppppppp|\n'\
+            '4|pppppppppppppppp|\n'\
+            '5|                |\n'\
+            '6|                |\n'\
+            '7|                |\n'\
+            '8|                |\n'\
+            '9|                |\n'\
+            '0|                |\n'\
+            '1|                |\n'\
+            '2|                |\n'\
+            '3|PPPPPPPPPPPPPPPP|\n'\
+            '4|PPPPPPPPPPPPPPPP|\n'\
+            '5|                |\n'\
+            '6|                |\n'\
+            'W*----------------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_board_16_16_with_pawns_rooks(self):
+        board = BoardFactory.size_16_with_pawns()
+        board = BoardFactory.size_16_with_rooks(board)
+        expected_board = \
+            'B*1234567890123456*\n' \
+            '1|rr            rr|\n'\
+            '2|rr            rr|\n'\
+            '3|pppppppppppppppp|\n'\
+            '4|pppppppppppppppp|\n'\
+            '5|                |\n'\
+            '6|                |\n'\
+            '7|                |\n'\
+            '8|                |\n'\
+            '9|                |\n'\
+            '0|                |\n'\
+            '1|                |\n'\
+            '2|                |\n'\
+            '3|PPPPPPPPPPPPPPPP|\n'\
+            '4|PPPPPPPPPPPPPPPP|\n'\
+            '5|RR            RR|\n'\
+            '6|RR            RR|\n'\
+            'W*----------------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_board_16_16_with_pawns_rooks_horses(self):
+        board = BoardFactory.size_16_with_pawns()
+        board = BoardFactory.size_16_with_rooks(board)
+        board = BoardFactory.size_16_with_horses(board)
+        expected_board = \
+            'B*1234567890123456*\n' \
+            '1|rrhh        hhrr|\n'\
+            '2|rrhh        hhrr|\n'\
+            '3|pppppppppppppppp|\n'\
+            '4|pppppppppppppppp|\n'\
+            '5|                |\n'\
+            '6|                |\n'\
+            '7|                |\n'\
+            '8|                |\n'\
+            '9|                |\n'\
+            '0|                |\n'\
+            '1|                |\n'\
+            '2|                |\n'\
+            '3|PPPPPPPPPPPPPPPP|\n'\
+            '4|PPPPPPPPPPPPPPPP|\n'\
+            '5|RRHH        HHRR|\n'\
+            '6|RRHH        HHRR|\n'\
+            'W*----------------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_board_16_16_with_pawns_rooks_horses_bishops(self):
+        board = BoardFactory.size_16_with_pawns()
+        board = BoardFactory.size_16_with_rooks(board)
+        board = BoardFactory.size_16_with_horses(board)
+        board = BoardFactory.size_16_with_bishops(board)
+        expected_board = \
+            'B*1234567890123456*\n' \
+            '1|rrhhbb    bbhhrr|\n'\
+            '2|rrhhbb    bbhhrr|\n'\
+            '3|pppppppppppppppp|\n'\
+            '4|pppppppppppppppp|\n'\
+            '5|                |\n'\
+            '6|                |\n'\
+            '7|                |\n'\
+            '8|                |\n'\
+            '9|                |\n'\
+            '0|                |\n'\
+            '1|                |\n'\
+            '2|                |\n'\
+            '3|PPPPPPPPPPPPPPPP|\n'\
+            '4|PPPPPPPPPPPPPPPP|\n'\
+            '5|RRHHBB    BBHHRR|\n'\
+            '6|RRHHBB    BBHHRR|\n'\
+            'W*----------------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_board_16_16_with_pawns_rooks_horses_bishops_queens(self):
+        board = BoardFactory.size_16_with_pawns()
+        board = BoardFactory.size_16_with_rooks(board)
+        board = BoardFactory.size_16_with_horses(board)
+        board = BoardFactory.size_16_with_bishops(board)
+        board = BoardFactory.size_16_with_queens(board)
+        expected_board = \
+            'B*1234567890123456*\n' \
+            '1|rrhhbbqq  bbhhrr|\n'\
+            '2|rrhhbbqq  bbhhrr|\n'\
+            '3|pppppppppppppppp|\n'\
+            '4|pppppppppppppppp|\n'\
+            '5|                |\n'\
+            '6|                |\n'\
+            '7|                |\n'\
+            '8|                |\n'\
+            '9|                |\n'\
+            '0|                |\n'\
+            '1|                |\n'\
+            '2|                |\n'\
+            '3|PPPPPPPPPPPPPPPP|\n'\
+            '4|PPPPPPPPPPPPPPPP|\n'\
+            '5|RRHHBBQQ  BBHHRR|\n'\
+            '6|RRHHBBQQ  BBHHRR|\n'\
+            'W*----------------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+    def test_board_16_16_with_pawns_rooks_horses_bishop_queens_kings(self):
+        board = BoardFactory.size_16_with_pawns()
+        board = BoardFactory.size_16_with_rooks(board)
+        board = BoardFactory.size_16_with_horses(board)
+        board = BoardFactory.size_16_with_bishops(board)
+        board = BoardFactory.size_16_with_queens(board)
+        board = BoardFactory.size_16_with_kings(board)
+        expected_board = \
+            'B*1234567890123456*\n' \
+            '1|rrhhbbqqkkbbhhrr|\n'\
+            '2|rrhhbbqqkkbbhhrr|\n'\
+            '3|pppppppppppppppp|\n'\
+            '4|pppppppppppppppp|\n'\
+            '5|                |\n'\
+            '6|                |\n'\
+            '7|                |\n'\
+            '8|                |\n'\
+            '9|                |\n'\
+            '0|                |\n'\
+            '1|                |\n'\
+            '2|                |\n'\
+            '3|PPPPPPPPPPPPPPPP|\n'\
+            '4|PPPPPPPPPPPPPPPP|\n'\
+            '5|RRHHBBQQKKBBHHRR|\n'\
+            '6|RRHHBBQQKKBBHHRR|\n'\
+            'W*----------------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
+
 class TestBoard(unittest.TestCase):
 
     def test_empty_board(self):

@@ -1,7 +1,9 @@
 WHITE = 'white'
 BLACK = 'black'
 
-CHESS_BOARD_SIZE = 8
+DEFAULT_CHESS_BOARD_SIZE = 8
+CHESS_BOARD_SIZE_16 = 16
+CHESS_BOARD_SIZE_32 = 32
 
 PAWN_INITIAL_ROW = {
     WHITE: 6,
@@ -149,6 +151,21 @@ class Pawn(Piece):
         BLACK: +1,
     }
 
+    def __init__(self, board, color):
+        super(Pawn, self).__init__(board, color)
+        self._moved = False
+
+    def _do_move(
+        self,
+        to_row,
+        to_col,
+        jump=False,
+        should_eat=False,
+        should_not_eat=False,
+    ):
+        super(Pawn, self)._do_move(to_row, to_col, jump, should_eat, should_not_eat)
+        self._moved = True
+
     def move(self, to_row, to_col):
         # simple move
         if(
@@ -161,7 +178,7 @@ class Pawn(Piece):
         if(
             to_col == self.col and
             to_row == (self.row + self.COLOR_DIRECTION[self.color] * 2) and
-            self.row == PAWN_INITIAL_ROW[self.color]
+            not self._moved
         ):
             return self._do_move(to_row, to_col, should_not_eat=True)
 
@@ -242,7 +259,7 @@ class BoardFactory(object):
     def with_pawns(cls, board=None):
         if not board:
             board = Board()
-        for col in xrange(0, CHESS_BOARD_SIZE):
+        for col in xrange(0, DEFAULT_CHESS_BOARD_SIZE):
             white_pawn = Pawn(board=board, color=WHITE)
             board.set_position(white_pawn, PAWN_INITIAL_ROW[WHITE], col)
             black_pawn = Pawn(board=board, color=BLACK)
@@ -250,10 +267,70 @@ class BoardFactory(object):
         return board
 
     @classmethod
+    def size_16_with_pawns(cls, board=None):
+        if not board:
+            board = Board(CHESS_BOARD_SIZE_16)
+        cells_prop = CHESS_BOARD_SIZE_16 / DEFAULT_CHESS_BOARD_SIZE
+        for col in xrange(0, CHESS_BOARD_SIZE_16):
+            for row in range(cells_prop):  # 0, 1
+                white_pawn = Pawn(board=board, color=WHITE)
+                board.set_position(white_pawn, PAWN_INITIAL_ROW[WHITE] * cells_prop + row, col)
+                white_pawn = Pawn(board=board, color=BLACK)
+                board.set_position(white_pawn, PAWN_INITIAL_ROW[BLACK] * cells_prop + row, col)
+        return board
+
+    @classmethod
+    def size_16_with_rooks(cls, board=None):
+        return cls.size_16_with_big_pieces(Rook, board)
+
+    @classmethod
+    def size_16_with_horses(cls, board=None):
+        return cls.size_16_with_big_pieces(Horse, board)
+
+    @classmethod
+    def size_16_with_bishops(cls, board=None):
+        return cls.size_16_with_big_pieces(Bishop, board)
+
+    @classmethod
+    def size_16_with_queens(cls, board=None):
+        return cls.size_16_with_big_pieces(Queen, board, mirror_positions=False)
+
+    @classmethod
+    def size_16_with_kings(cls, board=None):
+        return cls.size_16_with_big_pieces(King, board, mirror_positions=False)
+
+    @classmethod
+    def size_16_with_big_pieces(cls, piece_class, board=None, mirror_positions=True):
+        if not board:
+            board = Board(CHESS_BOARD_SIZE_16)
+        cells_prop = CHESS_BOARD_SIZE_16 / DEFAULT_CHESS_BOARD_SIZE
+
+        piece_positions = [piece_class.INITIAL_COLUMN * cells_prop]
+        if mirror_positions:
+            piece_positions.append(CHESS_BOARD_SIZE_16 - piece_class.INITIAL_COLUMN * cells_prop - cells_prop)
+
+        for col in range(0, 2):
+            for row in range(cells_prop):  # 0, 1
+                for piece_position in piece_positions:
+                    white_rook = piece_class(board=board, color=WHITE)
+                    board.set_position(
+                        white_rook,
+                        BIG_PIECES_INITIAL_ROW[WHITE] * cells_prop + row,
+                        col + piece_position
+                    )
+                    black_rook = piece_class(board=board, color=BLACK)
+                    board.set_position(
+                        black_rook,
+                        BIG_PIECES_INITIAL_ROW[BLACK] * cells_prop + row,
+                        col + piece_position
+                    )
+        return board
+
+    @classmethod
     def with_rooks(cls, board=None):
         if not board:
             board = Board()
-        for col in (Rook.INITIAL_COLUMN, CHESS_BOARD_SIZE - Rook.INITIAL_COLUMN - 1,):
+        for col in (Rook.INITIAL_COLUMN, DEFAULT_CHESS_BOARD_SIZE - Rook.INITIAL_COLUMN - 1,):
             white_rook = Rook(board=board, color=WHITE)
             board.set_position(white_rook, BIG_PIECES_INITIAL_ROW[WHITE], col)
             black_rook = Rook(board=board, color=BLACK)
@@ -265,7 +342,7 @@ class BoardFactory(object):
     def with_horses(cls, board=None):
         if not board:
             board = Board()
-        for col in (Horse.INITIAL_COLUMN, CHESS_BOARD_SIZE - Horse.INITIAL_COLUMN - 1,):
+        for col in (Horse.INITIAL_COLUMN, DEFAULT_CHESS_BOARD_SIZE - Horse.INITIAL_COLUMN - 1,):
             white_horse = Horse(board=board, color=WHITE)
             board.set_position(white_horse, BIG_PIECES_INITIAL_ROW[WHITE], col)
             black_horse = Horse(board=board, color=BLACK)
@@ -276,7 +353,7 @@ class BoardFactory(object):
     def with_bishops(cls, board=None):
         if not board:
             board = Board()
-        for col in (Bishop.INITIAL_COLUMN, CHESS_BOARD_SIZE - Bishop.INITIAL_COLUMN - 1,):
+        for col in (Bishop.INITIAL_COLUMN, DEFAULT_CHESS_BOARD_SIZE - Bishop.INITIAL_COLUMN - 1,):
             white_bishop = Bishop(board=board, color=WHITE)
             board.set_position(white_bishop, BIG_PIECES_INITIAL_ROW[WHITE], col)
             black_bishop = Bishop(board=board, color=BLACK)
@@ -307,11 +384,12 @@ class BoardFactory(object):
 
 class Board(object):
 
-    def __init__(self):
+    def __init__(self, size=DEFAULT_CHESS_BOARD_SIZE):
         self.actual_turn = WHITE
+        self.size = size
         self._board = [
-            [Cell(board=self, row=j, col=i) for i in range(CHESS_BOARD_SIZE)]
-            for j in range(CHESS_BOARD_SIZE)
+            [Cell(board=self, row=j, col=i) for i in range(size)]
+            for j in range(size)
         ]
 
     def get_position(self, row, col):
@@ -324,7 +402,7 @@ class Board(object):
         if from_row == to_row and to_col == from_col:
             raise InvalidArgumentException()
         for arg in [from_row, from_col, to_row, to_col]:
-            if arg < 0 or arg > CHESS_BOARD_SIZE - 1:
+            if arg < 0 or arg > self.size - 1:
                 raise InvalidArgumentException()
         self.get_position(from_row, from_col).move(to_row, to_col)
         if self.actual_turn == WHITE:
@@ -357,12 +435,14 @@ class Board(object):
         self.set_position(piece, to_row, to_col)
 
     def __str__(self):
-        _str = 'B*12345678*\n'
-        for row in xrange(0, CHESS_BOARD_SIZE):
-            _str += '%d|' % (row + 1)
-            for col in xrange(0, CHESS_BOARD_SIZE):
-                _str += str(self._board[row][col])
+        _str = 'B*{}*\n'.format(
+            ''.join([str(a % 10) for a in xrange(1, self.size + 1)])
+        )
+        for row in xrange(1, self.size + 1):
+            _str += '%d|' % (row % 10)
+            for col in xrange(1, self.size + 1):
+                _str += str(self._board[row - 1][col - 1])
             _str += '|\n'
 
-        _str += 'W*--------*\n'
+        _str += 'W*{}*\n'.format('-' * self.size)
         return _str
