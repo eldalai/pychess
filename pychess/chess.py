@@ -300,6 +300,16 @@ class BoardFactory(object):
         return cls.size_16_with_big_pieces(King, board, mirror_positions=False)
 
     @classmethod
+    def size_16(cls, board=None):
+        board = cls.size_16_with_pawns()
+        board = cls.size_16_with_rooks(board)
+        board = cls.size_16_with_horses(board)
+        board = cls.size_16_with_bishops(board)
+        board = cls.size_16_with_queens(board)
+        board = cls.size_16_with_kings(board)
+        return board
+
+    @classmethod
     def size_16_with_big_pieces(cls, piece_class, board=None, mirror_positions=True):
         if not board:
             board = Board(CHESS_BOARD_SIZE_16)

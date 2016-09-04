@@ -222,6 +222,33 @@ class TestBigBoard(unittest.TestCase):
             expected_board
         )
 
+    def test_board_16_16_complete(self):
+        board = BoardFactory.size_16()
+        expected_board = \
+            'B*1234567890123456*\n' \
+            '1|rrhhbbqqkkbbhhrr|\n'\
+            '2|rrhhbbqqkkbbhhrr|\n'\
+            '3|pppppppppppppppp|\n'\
+            '4|pppppppppppppppp|\n'\
+            '5|                |\n'\
+            '6|                |\n'\
+            '7|                |\n'\
+            '8|                |\n'\
+            '9|                |\n'\
+            '0|                |\n'\
+            '1|                |\n'\
+            '2|                |\n'\
+            '3|PPPPPPPPPPPPPPPP|\n'\
+            '4|PPPPPPPPPPPPPPPP|\n'\
+            '5|RRHHBBQQKKBBHHRR|\n'\
+            '6|RRHHBBQQKKBBHHRR|\n'\
+            'W*----------------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
 
 class TestBoard(unittest.TestCase):
 
