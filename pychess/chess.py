@@ -255,6 +255,15 @@ class King(Piece):
 
 class BoardFactory(object):
 
+    PIECES_BY_STR = {
+        Pawn.PIECE_LETTER: Pawn,
+        Rook.PIECE_LETTER: Rook,
+        Horse.PIECE_LETTER: Horse,
+        Bishop.PIECE_LETTER: Bishop,
+        Queen.PIECE_LETTER: Queen,
+        King.PIECE_LETTER: King,
+    }
+
     @classmethod
     def with_pawns(cls, board=None):
         if not board:
@@ -380,7 +389,6 @@ class BoardFactory(object):
         board.set_position(black_queen, BIG_PIECES_INITIAL_ROW[BLACK], Queen.INITIAL_COLUMN)
         return board
 
-
     @classmethod
     def with_kings(cls, board=None):
         if not board:
@@ -391,11 +399,34 @@ class BoardFactory(object):
         board.set_position(black_king, BIG_PIECES_INITIAL_ROW[BLACK], King.INITIAL_COLUMN)
         return board
 
+    @classmethod
+    def size_8(cls):
+        board = cls.with_pawns()
+        board = cls.with_rooks(board)
+        board = cls.with_horses(board)
+        board = cls.with_bishops(board)
+        board = cls.with_queens(board)
+        board = cls.with_kings(board)
+        return board
+
+    @classmethod
+    def deserialize(cls, serialized_board):
+        board = Board(serialized_board['size'])
+        for row in range(board.size):
+            for col in range(board.size):
+                piece_position = row * board.size + col
+                serialized_piece = serialized_board['board'][piece_position]
+                piece_class = cls.PIECES_BY_STR.get(serialized_piece.lower(), None)
+                if piece_class:
+                    color = BLACK if serialized_piece.islower() else WHITE
+                    board.set_position(piece_class(board=board, color=color), row, col)
+        return board
+
 
 class Board(object):
 
-    def __init__(self, size=DEFAULT_CHESS_BOARD_SIZE):
-        self.actual_turn = WHITE
+    def __init__(self, size=DEFAULT_CHESS_BOARD_SIZE, actual_turn=WHITE):
+        self.actual_turn = actual_turn
         self.size = size
         self._board = [
             [Cell(board=self, row=j, col=i) for i in range(size)]
@@ -456,3 +487,15 @@ class Board(object):
 
         _str += 'W*{}*\n'.format('-' * self.size)
         return _str
+
+    def serialize(self):
+        _str = ''
+        for row in range(self.size):
+            for col in range(self.size):
+                _str += str(self._board[row][col])
+
+        return {
+            'actual_turn': self.actual_turn,
+            'size': self.size,
+            'board': _str,
+        }

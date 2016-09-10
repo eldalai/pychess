@@ -21,7 +21,7 @@ class TestBigBoard(unittest.TestCase):
     def test_board_16_16(self):
         board = Board(size=16)
         expected_board = \
-            'B*1234567890123456*\n' \
+            'B*1234567890123456*\n'\
             '1|                |\n'\
             '2|                |\n'\
             '3|                |\n'\
@@ -48,7 +48,7 @@ class TestBigBoard(unittest.TestCase):
     def test_board_16_16_with_pawns(self):
         board = BoardFactory.size_16_with_pawns()
         expected_board = \
-            'B*1234567890123456*\n' \
+            'B*1234567890123456*\n'\
             '1|                |\n'\
             '2|                |\n'\
             '3|pppppppppppppppp|\n'\
@@ -76,7 +76,7 @@ class TestBigBoard(unittest.TestCase):
         board = BoardFactory.size_16_with_pawns()
         board = BoardFactory.size_16_with_rooks(board)
         expected_board = \
-            'B*1234567890123456*\n' \
+            'B*1234567890123456*\n'\
             '1|rr            rr|\n'\
             '2|rr            rr|\n'\
             '3|pppppppppppppppp|\n'\
@@ -105,7 +105,7 @@ class TestBigBoard(unittest.TestCase):
         board = BoardFactory.size_16_with_rooks(board)
         board = BoardFactory.size_16_with_horses(board)
         expected_board = \
-            'B*1234567890123456*\n' \
+            'B*1234567890123456*\n'\
             '1|rrhh        hhrr|\n'\
             '2|rrhh        hhrr|\n'\
             '3|pppppppppppppppp|\n'\
@@ -135,7 +135,7 @@ class TestBigBoard(unittest.TestCase):
         board = BoardFactory.size_16_with_horses(board)
         board = BoardFactory.size_16_with_bishops(board)
         expected_board = \
-            'B*1234567890123456*\n' \
+            'B*1234567890123456*\n'\
             '1|rrhhbb    bbhhrr|\n'\
             '2|rrhhbb    bbhhrr|\n'\
             '3|pppppppppppppppp|\n'\
@@ -166,7 +166,7 @@ class TestBigBoard(unittest.TestCase):
         board = BoardFactory.size_16_with_bishops(board)
         board = BoardFactory.size_16_with_queens(board)
         expected_board = \
-            'B*1234567890123456*\n' \
+            'B*1234567890123456*\n'\
             '1|rrhhbbqq  bbhhrr|\n'\
             '2|rrhhbbqq  bbhhrr|\n'\
             '3|pppppppppppppppp|\n'\
@@ -198,7 +198,7 @@ class TestBigBoard(unittest.TestCase):
         board = BoardFactory.size_16_with_queens(board)
         board = BoardFactory.size_16_with_kings(board)
         expected_board = \
-            'B*1234567890123456*\n' \
+            'B*1234567890123456*\n'\
             '1|rrhhbbqqkkbbhhrr|\n'\
             '2|rrhhbbqqkkbbhhrr|\n'\
             '3|pppppppppppppppp|\n'\
@@ -293,6 +293,26 @@ class TestBoard(unittest.TestCase):
 
         with self.assertRaises(InvalidArgumentException):
             board.move(6, 3, 6, 3)
+
+    def test_board_complete(self):
+        board = BoardFactory.size_8()
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|rhbqkbhr|\n'\
+            '2|pppppppp|\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|PPPPPPPP|\n'\
+            '8|RHBQKBHR|\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
 
 
 class TestPawns(unittest.TestCase):
@@ -1759,6 +1779,150 @@ class TestKings(unittest.TestCase):
             str(board),
             expected_board
         )
+
+
+class TestSerializeBoards(unittest.TestCase):
+
+    def test_serialize_empty_small_board(self):
+        board = Board()
+        serialized_board = board.serialize()
+
+        expected_board = {
+            'actual_turn': 'white',
+            'size': 8,
+            'board': ' ' * 64,
+        }
+
+        self.assertEquals(
+            serialized_board,
+            expected_board
+        )
+
+    def test_serialize_complete_small_board(self):
+        board = BoardFactory.size_8()
+        serialized_board = board.serialize()
+
+        expected_board = {
+            'actual_turn': 'white',
+            'size': 8,
+            'board': 'rhbqkbhrpppppppp                                PPPPPPPPRHBQKBHR',
+        }
+
+        self.assertEquals(
+            serialized_board,
+            expected_board
+        )
+
+    def test_deserialize_complete_small_board(self):
+        board = BoardFactory.size_8()
+        serialized_board = board.serialize()
+
+        deserialized_board = BoardFactory.deserialize(serialized_board)
+
+        re_serialized_board = deserialized_board.serialize()
+
+        expected_board = {
+            'actual_turn': 'white',
+            'size': 8,
+            'board': 'rhbqkbhrpppppppp                                PPPPPPPPRHBQKBHR',
+        }
+
+        self.assertEquals(
+            re_serialized_board,
+            expected_board
+        )
+
+        expected_str_board = \
+            'B*12345678*\n' \
+            '1|rhbqkbhr|\n'\
+            '2|pppppppp|\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|PPPPPPPP|\n'\
+            '8|RHBQKBHR|\n'\
+            'W*--------*\n'
+
+        self.assertEquals(
+            str(deserialized_board),
+            expected_str_board
+        )
+
+    def test_serialize_empty_big_board(self):
+        board = Board(size=16)
+        serialized_board = board.serialize()
+
+        expected_board = {
+            'actual_turn': 'white',
+            'size': 16,
+            'board': ' ' * 16 * 16,
+        }
+
+        self.assertEquals(
+            serialized_board,
+            expected_board
+        )
+
+    def test_serialize_complete_big_board(self):
+        board = BoardFactory.size_16()
+        serialized_board = board.serialize()
+
+        expected_board = {
+            'actual_turn': 'white',
+            'size': 16,
+            'board': 'rrhhbbqqkkbbhhrrrrhhbbqqkkbbhhrrpppppppppppppppppppppppppppppppp                                                                                                                                PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPRRHHBBQQKKBBHHRRRRHHBBQQKKBBHHRR',
+        }
+
+        self.assertEquals(
+            serialized_board,
+            expected_board
+        )
+
+    def test_deserialize_complete_big_board(self):
+        board = BoardFactory.size_16()
+
+        serialized_board = board.serialize()
+
+        deserialized_board = BoardFactory.deserialize(serialized_board)
+
+        re_serialized_board = deserialized_board.serialize()
+        expected_board = {
+            'actual_turn': 'white',
+            'size': 16,
+            'board': 'rrhhbbqqkkbbhhrrrrhhbbqqkkbbhhrrpppppppppppppppppppppppppppppppp                                                                                                                                PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPRRHHBBQQKKBBHHRRRRHHBBQQKKBBHHRR',
+        }
+
+        self.assertEquals(
+            re_serialized_board,
+            expected_board
+        )
+
+        expected_str_board = \
+            'B*1234567890123456*\n' \
+            '1|rrhhbbqqkkbbhhrr|\n'\
+            '2|rrhhbbqqkkbbhhrr|\n'\
+            '3|pppppppppppppppp|\n'\
+            '4|pppppppppppppppp|\n'\
+            '5|                |\n'\
+            '6|                |\n'\
+            '7|                |\n'\
+            '8|                |\n'\
+            '9|                |\n'\
+            '0|                |\n'\
+            '1|                |\n'\
+            '2|                |\n'\
+            '3|PPPPPPPPPPPPPPPP|\n'\
+            '4|PPPPPPPPPPPPPPPP|\n'\
+            '5|RRHHBBQQKKBBHHRR|\n'\
+            '6|RRHHBBQQKKBBHHRR|\n'\
+            'W*----------------*\n'
+
+        self.assertEquals(
+            str(deserialized_board),
+            expected_str_board
+        )
+
 
 if __name__ == '__main__':
     unittest.main()
