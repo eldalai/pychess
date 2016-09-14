@@ -15,6 +15,11 @@ BIG_PIECES_INITIAL_ROW = {
     BLACK: 0,
 }
 
+PROMOTE_PAWN_ROWS = {
+    DEFAULT_CHESS_BOARD_SIZE: (0, 7),
+    CHESS_BOARD_SIZE_16: (8, 7),
+}
+
 
 class ChessException(Exception):
     pass
@@ -164,6 +169,12 @@ class Pawn(Piece):
         should_not_eat=False,
     ):
         super(Pawn, self)._do_move(to_row, to_col, jump, should_eat, should_not_eat)
+        if to_row in PROMOTE_PAWN_ROWS[self.board.size]:
+            self.board.set_position(
+                Queen(board=self.board, color=self.color),
+                row=to_row,
+                col=to_col,
+            )
         self._moved = True
 
     def move(self, to_row, to_col):

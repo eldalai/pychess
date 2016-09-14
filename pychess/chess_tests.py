@@ -1924,5 +1924,48 @@ class TestSerializeBoards(unittest.TestCase):
         )
 
 
+class TestPromotePawn(unittest.TestCase):
+
+    def test_promote_pawn_big_chess(self):
+        board = BoardFactory.size_16()
+
+        # move white pawn
+        board.move(12, 0, 10, 0)
+        # move black pawn
+        board.move(3, 0, 5, 0)
+        # move white pawn
+        board.move(10, 0, 9, 0)
+        # move black pawn
+        board.move(5, 0, 6, 0)
+        # move white pawn
+        board.move(9, 0, 8, 0)
+        # move black pawn
+        board.move(6, 0, 7, 0)
+
+        expected_board = \
+            'B*1234567890123456*\n'\
+            '1|rrhhbbqqkkbbhhrr|\n'\
+            '2|rrhhbbqqkkbbhhrr|\n'\
+            '3|pppppppppppppppp|\n'\
+            '4| ppppppppppppppp|\n'\
+            '5|                |\n'\
+            '6|                |\n'\
+            '7|                |\n'\
+            '8|q               |\n'\
+            '9|Q               |\n'\
+            '0|                |\n'\
+            '1|                |\n'\
+            '2|                |\n'\
+            '3| PPPPPPPPPPPPPPP|\n'\
+            '4|PPPPPPPPPPPPPPPP|\n'\
+            '5|RRHHBBQQKKBBHHRR|\n'\
+            '6|RRHHBBQQKKBBHHRR|\n'\
+            'W*----------------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
 if __name__ == '__main__':
     unittest.main()
