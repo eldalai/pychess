@@ -13,6 +13,9 @@ from chess import (
     InvalidTurnException,
     ChessException,
     Pawn,
+    RESULT_MOVE,
+    RESULT_EAT,
+    RESULT_PROMOTE,
 )
 
 
@@ -385,8 +388,16 @@ class TestPawns(unittest.TestCase):
     def test_simple_move_pawn(self):
         board = BoardFactory.with_pawns()
         # move white pawn
-        board.move(6, 3, 5, 3)
+        move_result = board.move(6, 3, 5, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
 
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
         expected_board = \
             'B*12345678*\n' \
             '1|        |\n'\
@@ -408,9 +419,18 @@ class TestPawns(unittest.TestCase):
         board = BoardFactory.with_pawns()
 
         # move white pawn
-        board.move(6, 3, 5, 3)
+        move_result = board.move(6, 3, 5, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
+
         # move black pawn
-        board.move(1, 3, 2, 3)
+        move_result = board.move(1, 3, 2, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
 
         expected_board = \
             'B*12345678*\n' \
@@ -433,12 +453,21 @@ class TestPawns(unittest.TestCase):
         board = BoardFactory.with_pawns()
 
         # move white pawn
-        board.move(6, 3, 5, 3)
+        move_result = board.move(6, 3, 5, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
+
         # try to move black pawn again
         with self.assertRaises(InvalidTurnException):
             board.move(5, 3, 4, 3)
         # move black pawn
-        board.move(1, 3, 2, 3)
+        move_result = board.move(1, 3, 2, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
         # try to move black pawn again
         with self.assertRaises(InvalidTurnException):
             board.move(2, 3, 2, 4)
@@ -464,13 +493,30 @@ class TestPawns(unittest.TestCase):
         board = BoardFactory.with_pawns()
 
         # move white pawn
-        board.move(6, 3, 5, 3)
+        move_result = board.move(6, 3, 5, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
+
         # move black pawn
-        board.move(1, 3, 2, 3)
+        move_result = board.move(1, 3, 2, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
         # move white pawn
-        board.move(5, 3, 4, 3)
+        move_result = board.move(5, 3, 4, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
         # move black pawn
-        board.move(2, 3, 3, 3)
+        move_result = board.move(2, 3, 3, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
 
         with self.assertRaises(CellNotEmptyException):
             # try to move white pawn over black pawn
@@ -497,16 +543,37 @@ class TestPawns(unittest.TestCase):
         board = BoardFactory.with_pawns()
 
         # move white pawn
-        board.move(6, 3, 5, 3)
+        move_result = board.move(6, 3, 5, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
+
         # move black pawn
-        board.move(1, 4, 2, 4)
+        move_result = board.move(1, 4, 2, 4)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
         # move white pawn
-        board.move(5, 3, 4, 3)
+        move_result = board.move(5, 3, 4, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
         # move black pawn
-        board.move(2, 4, 3, 4)
+        move_result = board.move(2, 4, 3, 4)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
 
         # white pawn eat black pawn
-        board.move(4, 3, 3, 4)
+        move_result = board.move(4, 3, 3, 4)
+        self.assertEquals(
+            move_result,
+            (RESULT_EAT, 'p')
+        )
 
         expected_board = \
             'B*12345678*\n' \
@@ -529,13 +596,29 @@ class TestPawns(unittest.TestCase):
         board = BoardFactory.with_pawns()
 
         # move white pawn
-        board.move(6, 3, 5, 3)
+        move_result = board.move(6, 3, 5, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
         # move black pawn
-        board.move(1, 4, 2, 4)
+        move_result = board.move(1, 4, 2, 4)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
         # move white pawn
-        board.move(5, 3, 4, 3)
+        move_result = board.move(5, 3, 4, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
         # move black pawn
-        board.move(2, 4, 3, 4)
+        move_result = board.move(2, 4, 3, 4)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
 
         with self.assertRaises(CellEmptyException):
             # white pawn try eat empty cell
@@ -562,9 +645,18 @@ class TestPawns(unittest.TestCase):
         board = BoardFactory.with_pawns()
 
         # move white pawn
-        board.move(6, 3, 5, 3)
+        move_result = board.move(6, 3, 5, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
+
         # move black pawn
-        board.move(1, 4, 2, 4)
+        move_result = board.move(1, 4, 2, 4)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
         with self.assertRaises(InvalidEatException):
             # white pawn try eat same color
             board.move(6, 2, 5, 3)
@@ -572,7 +664,11 @@ class TestPawns(unittest.TestCase):
             # white pawn try eat same color
             board.move(6, 4, 5, 3)
         # move white pawn
-        board.move(6, 0, 5, 0)
+        move_result = board.move(6, 0, 5, 0)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
 
         with self.assertRaises(InvalidEatException):
             # black pawn try eat same color
@@ -601,7 +697,11 @@ class TestPawns(unittest.TestCase):
     def test_double_initial_move_pawn(self):
         board = BoardFactory.with_pawns()
         # move white pawn
-        board.move(6, 3, 4, 3)
+        move_result = board.move(6, 3, 4, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
 
         expected_board = \
             'B*12345678*\n' \
@@ -623,17 +723,33 @@ class TestPawns(unittest.TestCase):
     def test_try_double_initial_move_pawn_twice(self):
         board = BoardFactory.with_pawns()
         # double move white pawn
-        board.move(6, 3, 4, 3)
+        move_result = board.move(6, 3, 4, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
         # double move black pawn
-        board.move(1, 4, 3, 4)
+        move_result = board.move(1, 4, 3, 4)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
         with self.assertRaises(InvalidMoveException):
             # double move white pawn
             board.move(4, 3, 2, 3)
-        board.move(4, 3, 3, 3)
+        move_result = board.move(4, 3, 3, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
         with self.assertRaises(InvalidMoveException):
             # double move white pawn
             board.move(3, 4, 5, 4)
-        board.move(3, 4, 4, 4)
+        move_result = board.move(3, 4, 4, 4)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
 
         expected_board = \
             'B*12345678*\n' \
@@ -656,13 +772,29 @@ class TestPawns(unittest.TestCase):
         board = BoardFactory.with_pawns()
 
         # move white pawn
-        board.move(6, 3, 4, 3)
+        move_result = board.move(6, 3, 4, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
         # move black pawn
-        board.move(1, 4, 3, 4)
+        move_result = board.move(1, 4, 3, 4)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
         # move white pawn
-        board.move(4, 3, 3, 3)
+        move_result = board.move(4, 3, 3, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
         # move black pawn
-        board.move(3, 4, 4, 4)
+        move_result = board.move(3, 4, 4, 4)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
 
         with self.assertRaises(CellNotEmptyException):
             # try to move white pawn over black pawn
@@ -689,15 +821,35 @@ class TestPawns(unittest.TestCase):
         board = BoardFactory.with_pawns()
 
         # move white pawn
-        board.move(6, 3, 4, 3)
+        move_result = board.move(6, 3, 4, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
         # move black pawn
-        board.move(1, 4, 3, 4)
+        move_result = board.move(1, 4, 3, 4)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
         # move white pawn
-        board.move(4, 3, 3, 3)
+        move_result = board.move(4, 3, 3, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
         # move black pawn
-        board.move(3, 4, 4, 4)
+        move_result = board.move(3, 4, 4, 4)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
         # move white pawn
-        board.move(6, 4, 5, 4)
+        move_result = board.move(6, 4, 5, 4)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
 
         expected_board = \
             'B*12345678*\n' \
@@ -856,7 +1008,11 @@ class TestRooks(unittest.TestCase):
     def test_simple_move_rook_up(self):
         board = BoardFactory.with_rooks()
 
-        board.move(7, 0, 6, 0)
+        move_result = board.move(7, 0, 6, 0)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'r')
+        )
 
         expected_board = \
             'B*12345678*\n' \
@@ -879,9 +1035,17 @@ class TestRooks(unittest.TestCase):
         board = BoardFactory.with_rooks()
 
         # move white rook up
-        board.move(7, 0, 6, 0)
+        move_result = board.move(7, 0, 6, 0)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'r')
+        )
         # move black rook down
-        board.move(0, 0, 1, 0)
+        move_result = board.move(0, 0, 1, 0)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'r')
+        )
 
         expected_board = \
             'B*12345678*\n' \
@@ -904,13 +1068,21 @@ class TestRooks(unittest.TestCase):
         board = BoardFactory.with_rooks()
 
         # move white rook up
-        board.move(7, 0, 6, 0)
+        move_result = board.move(7, 0, 6, 0)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'r')
+        )
         # try to move black pawn again
         with self.assertRaises(InvalidTurnException):
             board.move(6, 0, 5, 0)
 
         # move black rook down
-        board.move(0, 0, 1, 0)
+        move_result = board.move(0, 0, 1, 0)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'r')
+        )
         # try to move black pawn again
         with self.assertRaises(InvalidTurnException):
             board.move(1, 0, 2, 0)
@@ -935,9 +1107,17 @@ class TestRooks(unittest.TestCase):
     def test_rook_eat_rook(self):
         board = BoardFactory.with_rooks()
         # white rook eat black rook
-        board.move(7, 0, 0, 0)
+        move_result = board.move(7, 0, 0, 0)
+        self.assertEquals(
+            move_result,
+            (RESULT_EAT, 'r')
+        )
         # black rook eat white rook
-        board.move(0, 7, 7, 7)
+        move_result = board.move(0, 7, 7, 7)
+        self.assertEquals(
+            move_result,
+            (RESULT_EAT, 'r')
+        )
 
         expected_board = \
             'B*12345678*\n' \
@@ -1147,7 +1327,11 @@ class TestHorses(unittest.TestCase):
     def test_simple_move_horse(self):
         board = BoardFactory.with_horses()
 
-        board.move(7, 1, 5, 2)
+        move_result = board.move(7, 1, 5, 2)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'h')
+        )
 
         expected_board = \
             'B*12345678*\n' \
@@ -1170,7 +1354,11 @@ class TestHorses(unittest.TestCase):
         board = BoardFactory.with_horses()
         BoardFactory.with_pawns(board)
 
-        board.move(7, 1, 5, 2)
+        move_result = board.move(7, 1, 5, 2)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'h')
+        )
 
         expected_board = \
             'B*12345678*\n' \
@@ -1189,7 +1377,11 @@ class TestHorses(unittest.TestCase):
             expected_board
         )
 
-        board.move(0, 1, 2, 0)
+        move_result = board.move(0, 1, 2, 0)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'h')
+        )
         expected_board = \
             'B*12345678*\n' \
             '1|      h |\n'\
@@ -1208,6 +1400,10 @@ class TestHorses(unittest.TestCase):
         )
 
         board.move(5, 2, 3, 1)
+        move_result = self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'h')
+        )
 
         expected_board = \
             'B*12345678*\n' \
@@ -1225,8 +1421,16 @@ class TestHorses(unittest.TestCase):
             str(board),
             expected_board
         )
-        board.move(2, 0, 3, 2)
-        board.move(3, 1, 2, 3)
+        move_result = board.move(2, 0, 3, 2)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'h')
+        )
+        move_result = board.move(3, 1, 2, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'h')
+        )
 
         expected_board = \
             'B*12345678*\n' \
@@ -1411,7 +1615,11 @@ class TestBishops(unittest.TestCase):
     def test_simple_move_bishop(self):
         board = BoardFactory.with_bishops()
 
-        board.move(7, 2, 6, 1)
+        move_result = board.move(7, 2, 6, 1)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'b')
+        )
 
         expected_board = \
             'B*12345678*\n' \
@@ -1434,9 +1642,17 @@ class TestBishops(unittest.TestCase):
         board = BoardFactory.with_bishops()
 
         # move white bishop up
-        board.move(7, 2, 6, 1)
+        move_result = board.move(7, 2, 6, 1)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'b')
+        )
         # move black bishop down
-        board.move(0, 2, 1, 1)
+        move_result = board.move(0, 2, 1, 1)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'b')
+        )
 
         expected_board = \
             'B*12345678*\n' \
@@ -1459,13 +1675,21 @@ class TestBishops(unittest.TestCase):
         board = BoardFactory.with_bishops()
 
         # move white bishop
-        board.move(7, 2, 6, 1)
+        move_result = board.move(7, 2, 6, 1)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'b')
+        )
         # try to move white bishop again
         with self.assertRaises(InvalidTurnException):
             board.move(6, 1, 5, 2)
 
         # move black bishop down
-        board.move(0, 2, 1, 1)
+        move_result = board.move(0, 2, 1, 1)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'b')
+        )
         # try to move black bishop again
         with self.assertRaises(InvalidTurnException):
             board.move(1, 1, 2, 2)
@@ -1510,8 +1734,12 @@ class TestBishops(unittest.TestCase):
             expected_board
         )
 
-        # move white bishop
-        board.move(7, 2, 6, 1)
+        # eat white bishop
+        move_result = board.move(7, 2, 6, 1)
+        self.assertEquals(
+            move_result,
+            (RESULT_EAT, 'p')
+        )
 
         expected_board = \
             'B*12345678*\n' \
@@ -1624,8 +1852,16 @@ class TestQueens(unittest.TestCase):
     def test_try_horizontal_move(self):
         board = BoardFactory.with_queens()
 
-        board.move(7, 3, 7, 1)
-        board.move(0, 3, 0, 7)
+        move_result = board.move(7, 3, 7, 1)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'q')
+        )
+        move_result = board.move(0, 3, 0, 7)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'q')
+        )
 
         expected_board = \
             'B*12345678*\n' \
@@ -1647,8 +1883,16 @@ class TestQueens(unittest.TestCase):
     def test_try_vertical_move_queen(self):
         board = BoardFactory.with_queens()
 
-        board.move(7, 3, 6, 3)
-        board.move(0, 3, 3, 3)
+        move_result = board.move(7, 3, 6, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'q')
+        )
+        move_result = board.move(0, 3, 3, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'q')
+        )
 
         expected_board = \
             'B*12345678*\n' \
@@ -1670,7 +1914,11 @@ class TestQueens(unittest.TestCase):
     def test_try_diagonal_move_queen(self):
         board = BoardFactory.with_queens()
 
-        board.move(7, 3, 5, 5)
+        move_result = board.move(7, 3, 5, 5)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'q')
+        )
 
         expected_board = \
             'B*12345678*\n' \
@@ -1714,8 +1962,16 @@ class TestKings(unittest.TestCase):
     def test_try_horizontal_move(self):
         board = BoardFactory.with_kings()
 
-        board.move(7, 4, 7, 3)
-        board.move(0, 4, 0, 5)
+        move_result = board.move(7, 4, 7, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'k')
+        )
+        move_result = board.move(0, 4, 0, 5)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'k')
+        )
 
         expected_board = \
             'B*12345678*\n' \
@@ -1737,8 +1993,16 @@ class TestKings(unittest.TestCase):
     def test_try_vertical_move_queen(self):
         board = BoardFactory.with_kings()
 
-        board.move(7, 4, 6, 4)
-        board.move(0, 4, 1, 4)
+        move_result = board.move(7, 4, 6, 4)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'k')
+        )
+        move_result = board.move(0, 4, 1, 4)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'k')
+        )
 
         expected_board = \
             'B*12345678*\n' \
@@ -1760,8 +2024,16 @@ class TestKings(unittest.TestCase):
     def test_try_diagonal_move_king(self):
         board = BoardFactory.with_kings()
 
-        board.move(7, 4, 6, 3)
-        board.move(0, 4, 1, 5)
+        move_result = board.move(7, 4, 6, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'k')
+        )
+        move_result = board.move(0, 4, 1, 5)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'k')
+        )
 
         expected_board = \
             'B*12345678*\n' \
@@ -1930,17 +2202,41 @@ class TestPromotePawn(unittest.TestCase):
         board = BoardFactory.size_16()
 
         # move white pawn
-        board.move(12, 0, 10, 0)
+        move_result = board.move(12, 0, 10, 0)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
         # move black pawn
-        board.move(3, 0, 5, 0)
+        move_result = board.move(3, 0, 5, 0)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
         # move white pawn
-        board.move(10, 0, 9, 0)
+        move_result = board.move(10, 0, 9, 0)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
         # move black pawn
-        board.move(5, 0, 6, 0)
+        move_result = board.move(5, 0, 6, 0)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
         # move white pawn
-        board.move(9, 0, 8, 0)
+        move_result = board.move(9, 0, 8, 0)
+        self.assertEquals(
+            move_result,
+            (RESULT_PROMOTE, 'p')
+        )
         # move black pawn
-        board.move(6, 0, 7, 0)
+        move_result = board.move(6, 0, 7, 0)
+        self.assertEquals(
+            move_result,
+            (RESULT_PROMOTE, 'p')
+        )
 
         expected_board = \
             'B*1234567890123456*\n'\

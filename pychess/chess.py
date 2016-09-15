@@ -20,6 +20,10 @@ PROMOTE_PAWN_ROWS = {
     CHESS_BOARD_SIZE_16: (8, 7),
 }
 
+RESULT_MOVE = 'moved'
+RESULT_EAT = 'eat'
+RESULT_PROMOTE = 'promote'
+
 
 class ChessException(Exception):
     pass
@@ -80,7 +84,7 @@ class Cell(object):
         if self._board.actual_turn != self._piece.color:
             raise InvalidTurnException()
 
-        self._piece.move(to_row, to_col)
+        return self._piece.move(to_row, to_col)
 
     def __str__(self):
         if self._piece:
@@ -140,7 +144,7 @@ class Piece(object):
         ):
             raise InvalidEatException()
 
-        self.board.move_piece(self, to_row, to_col, jump)
+        return self.board.move_piece(self, to_row, to_col, jump)
 
     def __str__(self):
         if self.color == WHITE:
@@ -168,14 +172,16 @@ class Pawn(Piece):
         should_eat=False,
         should_not_eat=False,
     ):
-        super(Pawn, self)._do_move(to_row, to_col, jump, should_eat, should_not_eat)
+        move_result = super(Pawn, self)._do_move(to_row, to_col, jump, should_eat, should_not_eat)
+        self._moved = True
         if to_row in PROMOTE_PAWN_ROWS[self.board.size]:
             self.board.set_position(
                 Queen(board=self.board, color=self.color),
                 row=to_row,
                 col=to_col,
             )
-        self._moved = True
+            return (RESULT_PROMOTE, self.PIECE_LETTER)
+        return move_result
 
     def move(self, to_row, to_col):
         # simple move
@@ -210,7 +216,7 @@ class Rook(Piece):
     def move(self, to_row, to_col):
         if not self.is_horizontal_move(to_row, to_col):
             raise InvalidMoveException()
-        self._do_move(to_row, to_col)
+        return self._do_move(to_row, to_col)
 
 
 class Horse(Piece):
@@ -223,7 +229,7 @@ class Horse(Piece):
             abs(self.row - to_row) == 1 and abs(self.col - to_col) == 2
         ):
             raise InvalidMoveException()
-        self._do_move(to_row, to_col, jump=True)
+        return self._do_move(to_row, to_col, jump=True)
 
 
 class Bishop(Piece):
@@ -233,7 +239,7 @@ class Bishop(Piece):
     def move(self, to_row, to_col):
         if not self.is_diagonal_move(to_row, to_col):
             raise InvalidMoveException()
-        self._do_move(to_row, to_col)
+        return self._do_move(to_row, to_col)
 
 
 class Queen(Piece):
@@ -246,7 +252,7 @@ class Queen(Piece):
             not self.is_horizontal_move(to_row, to_col)
         ):
             raise InvalidMoveException()
-        self._do_move(to_row, to_col)
+        return self._do_move(to_row, to_col)
 
 
 class King(Piece):
@@ -261,7 +267,7 @@ class King(Piece):
             abs(self.col - to_col) > 1
         ):
             raise InvalidMoveException()
-        self._do_move(to_row, to_col)
+        return self._do_move(to_row, to_col)
 
 
 class BoardFactory(object):
@@ -456,11 +462,12 @@ class Board(object):
         for arg in [from_row, from_col, to_row, to_col]:
             if arg < 0 or arg > self.size - 1:
                 raise InvalidArgumentException()
-        self.get_position(from_row, from_col).move(to_row, to_col)
+        move_result = self.get_position(from_row, from_col).move(to_row, to_col)
         if self.actual_turn == WHITE:
             self.actual_turn = BLACK
         else:
             self.actual_turn = WHITE
+        return move_result
 
     def move_piece(self, piece, to_row, to_col, jump=False):
         if not jump:
@@ -483,8 +490,15 @@ class Board(object):
                         not self.get_position(mid_row, mid_col).is_empty
                     ):
                         raise InvalidMoveException()
+
         self.get_position(piece.row, piece.col).set_empty()
-        self.set_position(piece, to_row, to_col)
+        new_position = self.get_position(to_row, to_col)
+        if new_position.is_empty:
+            move_result = (RESULT_MOVE, piece.PIECE_LETTER)
+        else:
+            move_result = (RESULT_EAT, new_position.piece.PIECE_LETTER)
+        new_position.set_piece(piece)
+        return move_result
 
     def __str__(self):
         _str = 'B*{}*\n'.format(
