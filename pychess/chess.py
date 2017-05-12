@@ -429,6 +429,7 @@ class BoardFactory(object):
     @classmethod
     def deserialize(cls, serialized_board):
         board = Board(serialized_board['size'])
+        board.actual_turn = serialized_board['actual_turn']
         for row in range(board.size):
             for col in range(board.size):
                 piece_position = row * board.size + col

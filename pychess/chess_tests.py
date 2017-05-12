@@ -2151,6 +2151,29 @@ class TestSerializeBoards(unittest.TestCase):
             expected_board
         )
 
+    def test_serialize_complete_big_board_with_move(self):
+        board = BoardFactory.size_16()
+
+        # move white pawn
+        move_result = board.move(12, 0, 10, 0)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
+
+        serialized_board = board.serialize()
+
+        expected_board = {
+            'actual_turn': 'black',
+            'size': 16,
+            'board': 'rrhhbbqqkkbbhhrrrrhhbbqqkkbbhhrrpppppppppppppppppppppppppppppppp                                                                                                P                                PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPRRHHBBQQKKBBHHRRRRHHBBQQKKBBHHRR',
+        }
+
+        self.assertEquals(
+            serialized_board,
+            expected_board
+        )
+
     def test_deserialize_complete_big_board(self):
         board = BoardFactory.size_16()
 
