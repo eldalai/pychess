@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="Python Chess",
-    version="0.5.0",
+    version="0.6.0",
     author="Gabriel Flores",
     author_email="eldalai@gmail.com",
     description=("Python pure chess logic"),
