@@ -285,7 +285,7 @@ class BoardFactory(object):
     def with_pawns(cls, board=None):
         if not board:
             board = Board()
-        for col in xrange(0, DEFAULT_CHESS_BOARD_SIZE):
+        for col in range(0, DEFAULT_CHESS_BOARD_SIZE):
             white_pawn = Pawn(board=board, color=WHITE)
             board.set_position(white_pawn, PAWN_INITIAL_ROW[WHITE], col)
             black_pawn = Pawn(board=board, color=BLACK)
@@ -296,8 +296,8 @@ class BoardFactory(object):
     def size_16_with_pawns(cls, board=None):
         if not board:
             board = Board(CHESS_BOARD_SIZE_16)
-        cells_prop = CHESS_BOARD_SIZE_16 / DEFAULT_CHESS_BOARD_SIZE
-        for col in xrange(0, CHESS_BOARD_SIZE_16):
+        cells_prop = int(CHESS_BOARD_SIZE_16 / DEFAULT_CHESS_BOARD_SIZE)
+        for col in range(0, CHESS_BOARD_SIZE_16):
             for row in range(cells_prop):  # 0, 1
                 white_pawn = Pawn(board=board, color=WHITE)
                 board.set_position(white_pawn, PAWN_INITIAL_ROW[WHITE] * cells_prop + row, col)
@@ -339,7 +339,7 @@ class BoardFactory(object):
     def size_16_with_big_pieces(cls, piece_class, board=None, mirror_positions=True):
         if not board:
             board = Board(CHESS_BOARD_SIZE_16)
-        cells_prop = CHESS_BOARD_SIZE_16 / DEFAULT_CHESS_BOARD_SIZE
+        cells_prop = int(CHESS_BOARD_SIZE_16 / DEFAULT_CHESS_BOARD_SIZE)
 
         piece_positions = [piece_class.INITIAL_COLUMN * cells_prop]
         if mirror_positions:
@@ -503,11 +503,11 @@ class Board(object):
 
     def __str__(self):
         _str = 'B*{}*\n'.format(
-            ''.join([str(a % 10) for a in xrange(1, self.size + 1)])
+            ''.join([str(a % 10) for a in range(1, self.size + 1)])
         )
-        for row in xrange(1, self.size + 1):
+        for row in range(1, self.size + 1):
             _str += '%d|' % (row % 10)
-            for col in xrange(1, self.size + 1):
+            for col in range(1, self.size + 1):
                 _str += str(self._board[row - 1][col - 1])
             _str += '|\n'
 
