@@ -514,14 +514,16 @@ class Board(object):
         _str += 'W*{}*\n'.format('-' * self.size)
         return _str
 
-    def serialize(self):
+    def get_simple(self):
         _str = ''
         for row in range(self.size):
             for col in range(self.size):
                 _str += str(self._board[row][col])
+        return _str
 
+    def serialize(self):
         return {
             'actual_turn': self.actual_turn,
             'size': self.size,
-            'board': _str,
+            'board': self.get_simple(),
         }

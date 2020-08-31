@@ -274,6 +274,16 @@ class TestBoard(unittest.TestCase):
             expected_board
         )
 
+    def test_board_get_simple_16_16(self):
+        board = Board(size=16)
+
+        self.assertEqual(board.get_simple(), ' ' * 256)
+
+    def test_board_get_simple_8_8(self):
+        board = Board(size=8)
+
+        self.assertEqual(board.get_simple(), ' ' * 64)
+
     def test_board_invalid_argument(self):
         board = BoardFactory.with_pawns()
         with self.assertRaises(InvalidArgumentException):
