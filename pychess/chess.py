@@ -162,7 +162,6 @@ class Pawn(Piece):
 
     def __init__(self, board, color):
         super(Pawn, self).__init__(board, color)
-        self._moved = False
 
     def _do_move(
         self,
@@ -173,7 +172,6 @@ class Pawn(Piece):
         should_not_eat=False,
     ):
         move_result = super(Pawn, self)._do_move(to_row, to_col, jump, should_eat, should_not_eat)
-        self._moved = True
         if to_row in PROMOTE_PAWN_ROWS[self.board.size]:
             self.board.set_position(
                 Queen(board=self.board, color=self.color),
@@ -191,11 +189,18 @@ class Pawn(Piece):
         ):
             return self._do_move(to_row, to_col, should_not_eat=True)
 
+        pawn_initial_row = PAWN_INITIAL_ROW[self.color]  # 6 (white) or 1 (black)
+        cells_prop = self.board.size // DEFAULT_CHESS_BOARD_SIZE  # 16 or 8  / 8
+        pawn_initial_rows = [
+            pawn_initial_row * cells_prop + count
+            for count in range(cells_prop)  # 2 or 1
+        ]
         # double initial move
         if(
             to_col == self.col and
             to_row == (self.row + self.COLOR_DIRECTION[self.color] * 2) and
-            not self._moved
+            self.row in pawn_initial_rows
+            # not self._moved
         ):
             return self._do_move(to_row, to_col, should_not_eat=True)
 

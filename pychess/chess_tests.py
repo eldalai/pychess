@@ -730,6 +730,106 @@ class TestPawns(unittest.TestCase):
             expected_board
         )
 
+    def test_double_initial_move_pawn_big_chess(self):
+        board = BoardFactory.size_16_with_pawns()
+        # move white pawn
+        move_result = board.move(12, 0, 10, 0)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
+
+        move_result = board.move(3, 1, 5, 1)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
+
+        move_result = board.move(13, 0, 11, 0)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
+
+        move_result = board.move(2, 1, 4, 1)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
+
+        move_result = board.move(12, 3, 10, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
+
+        move_result = board.move(3, 3, 5, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
+
+        move_result = board.move(10, 3, 9, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
+
+        move_result = board.move(5, 3, 6, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
+
+        move_result = board.move(13, 3, 12, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
+
+        move_result = board.move(2, 3, 3, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
+
+        move_result = board.move(12, 3, 10, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
+
+        move_result = board.move(3, 3, 5, 3)
+        self.assertEquals(
+            move_result,
+            (RESULT_MOVE, 'p')
+        )
+
+        expected_board = \
+            'B*1234567890123456*\n'\
+            '1|                |\n'\
+            '2|                |\n'\
+            '3|p p pppppppppppp|\n'\
+            '4|p p pppppppppppp|\n'\
+            '5| p              |\n'\
+            '6| p p            |\n'\
+            '7|   p            |\n'\
+            '8|                |\n'\
+            '9|                |\n'\
+            '0|   P            |\n'\
+            '1|P  P            |\n'\
+            '2|P               |\n'\
+            '3| PP PPPPPPPPPPPP|\n'\
+            '4| PP PPPPPPPPPPPP|\n'\
+            '5|                |\n'\
+            '6|                |\n'\
+            'W*----------------*\n'
+
+        self.assertEquals(
+            str(board),
+            expected_board
+        )
+
     def test_try_double_initial_move_pawn_twice(self):
         board = BoardFactory.with_pawns()
         # double move white pawn
