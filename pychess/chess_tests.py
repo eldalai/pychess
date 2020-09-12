@@ -1318,7 +1318,6 @@ class TestRooks(unittest.TestCase):
             str(board),
             expected_board
         )
-
         # move white rook a little
         with self.assertRaises(InvalidMoveException):
             board.move(7, 0, 7, 2)
@@ -2327,6 +2326,36 @@ class TestSerializeBoards(unittest.TestCase):
             str(deserialized_board),
             expected_str_board
         )
+
+
+class TestPlay(unittest.TestCase):
+
+    def test_verify_move(self):
+        serialized_board = {
+            'actual_turn': 'black',
+            'size': 16,
+            'board': (
+                'rrhhbbqqkkbbhhrr'
+                'rrhhbbqqkkbbhhrr'
+                'pppppppppppppppp'
+                'ppppppp pppppppp'
+                '                '
+                '                '
+                '                '
+                '                '
+                'QQ  Q   Q Q Q   '
+                ' PPP  PP   P  P '
+                '         P      '
+                '  P   P    q   P'  # 11, 11
+                '   P P          '
+                '               P'
+                '                '
+                '                '
+            )
+
+        }
+        board = BoardFactory.deserialize(serialized_board)
+        board.move(11, 11, 8, 8)
 
 
 class TestPromotePawn(unittest.TestCase):

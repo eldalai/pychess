@@ -478,24 +478,22 @@ class Board(object):
     def move_piece(self, piece, to_row, to_col, jump=False):
         if not jump:
             if piece.row == to_row:
-                row_range = [to_row]
+                step_row = 0
             else:
                 step_row = -1 if piece.row > to_row else 1
-                row_range = range(piece.row, to_row, step_row)
 
             if piece.col == to_col:
-                col_range = [to_col]
+                step_col = 0
             else:
                 step_col = -1 if piece.col > to_col else 1
-                col_range = range(piece.col, to_col, step_col)
 
-            for mid_row in row_range:
-                for mid_col in col_range:
-                    if(
-                        not(mid_row == piece.row and mid_col == piece.col) and
-                        not self.get_position(mid_row, mid_col).is_empty
-                    ):
-                        raise InvalidMoveException()
+            mid_col = piece.col + step_col
+            mid_row = piece.row + step_row
+            while mid_col != to_col or mid_row != to_row:
+                if not self.get_position(mid_row, mid_col).is_empty:
+                    raise InvalidMoveException()
+                mid_col += step_col
+                mid_row += step_row
 
         self.get_position(piece.row, piece.col).set_empty()
         new_position = self.get_position(to_row, to_col)
