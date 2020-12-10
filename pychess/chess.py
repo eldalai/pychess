@@ -266,9 +266,7 @@ class King(Piece):
 
     def move(self, to_row, to_col):
         if(
-            not self.is_diagonal_move(to_row, to_col) and
-            not self.is_horizontal_move(to_row, to_col) and
-            abs(self.row - to_row) > 1 and
+            abs(self.row - to_row) > 1 or
             abs(self.col - to_col) > 1
         ):
             raise InvalidMoveException()

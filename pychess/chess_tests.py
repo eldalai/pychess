@@ -43,7 +43,7 @@ class TestBigBoard(unittest.TestCase):
             '6|                |\n'\
             'W*----------------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -70,7 +70,7 @@ class TestBigBoard(unittest.TestCase):
             '6|                |\n'\
             'W*----------------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -98,7 +98,7 @@ class TestBigBoard(unittest.TestCase):
             '6|RR            RR|\n'\
             'W*----------------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -127,7 +127,7 @@ class TestBigBoard(unittest.TestCase):
             '6|RRHH        HHRR|\n'\
             'W*----------------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -157,7 +157,7 @@ class TestBigBoard(unittest.TestCase):
             '6|RRHHBB    BBHHRR|\n'\
             'W*----------------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -188,7 +188,7 @@ class TestBigBoard(unittest.TestCase):
             '6|RRHHBBQQ  BBHHRR|\n'\
             'W*----------------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -220,7 +220,7 @@ class TestBigBoard(unittest.TestCase):
             '6|RRHHBBQQKKBBHHRR|\n'\
             'W*----------------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -247,7 +247,7 @@ class TestBigBoard(unittest.TestCase):
             '6|RRHHBBQQKKBBHHRR|\n'\
             'W*----------------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -269,7 +269,7 @@ class TestBoard(unittest.TestCase):
             '8|        |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -322,7 +322,7 @@ class TestBoard(unittest.TestCase):
             '8|RHBQKBHR|\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -344,7 +344,7 @@ class TestPawns(unittest.TestCase):
             '8|        |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -367,7 +367,7 @@ class TestPawns(unittest.TestCase):
             '8|        |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -390,7 +390,7 @@ class TestPawns(unittest.TestCase):
             '8|        |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -399,12 +399,12 @@ class TestPawns(unittest.TestCase):
         board = BoardFactory.with_pawns()
         # move white pawn
         move_result = board.move(6, 3, 5, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
 
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
@@ -420,7 +420,7 @@ class TestPawns(unittest.TestCase):
             '8|        |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -430,14 +430,14 @@ class TestPawns(unittest.TestCase):
 
         # move white pawn
         move_result = board.move(6, 3, 5, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
 
         # move black pawn
         move_result = board.move(1, 3, 2, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
@@ -454,7 +454,7 @@ class TestPawns(unittest.TestCase):
             '8|        |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -464,7 +464,7 @@ class TestPawns(unittest.TestCase):
 
         # move white pawn
         move_result = board.move(6, 3, 5, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
@@ -474,7 +474,7 @@ class TestPawns(unittest.TestCase):
             board.move(5, 3, 4, 3)
         # move black pawn
         move_result = board.move(1, 3, 2, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
@@ -494,7 +494,7 @@ class TestPawns(unittest.TestCase):
             '8|        |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -504,26 +504,26 @@ class TestPawns(unittest.TestCase):
 
         # move white pawn
         move_result = board.move(6, 3, 5, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
 
         # move black pawn
         move_result = board.move(1, 3, 2, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
         # move white pawn
         move_result = board.move(5, 3, 4, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
         # move black pawn
         move_result = board.move(2, 3, 3, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
@@ -544,7 +544,7 @@ class TestPawns(unittest.TestCase):
             '8|        |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -554,33 +554,33 @@ class TestPawns(unittest.TestCase):
 
         # move white pawn
         move_result = board.move(6, 3, 5, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
 
         # move black pawn
         move_result = board.move(1, 4, 2, 4)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
         # move white pawn
         move_result = board.move(5, 3, 4, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
         # move black pawn
         move_result = board.move(2, 4, 3, 4)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
 
         # white pawn eat black pawn
         move_result = board.move(4, 3, 3, 4)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_EAT, 'p')
         )
@@ -597,7 +597,7 @@ class TestPawns(unittest.TestCase):
             '8|        |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -607,25 +607,25 @@ class TestPawns(unittest.TestCase):
 
         # move white pawn
         move_result = board.move(6, 3, 5, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
         # move black pawn
         move_result = board.move(1, 4, 2, 4)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
         # move white pawn
         move_result = board.move(5, 3, 4, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
         # move black pawn
         move_result = board.move(2, 4, 3, 4)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
@@ -646,7 +646,7 @@ class TestPawns(unittest.TestCase):
             '8|        |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -656,14 +656,14 @@ class TestPawns(unittest.TestCase):
 
         # move white pawn
         move_result = board.move(6, 3, 5, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
 
         # move black pawn
         move_result = board.move(1, 4, 2, 4)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
@@ -675,7 +675,7 @@ class TestPawns(unittest.TestCase):
             board.move(6, 4, 5, 3)
         # move white pawn
         move_result = board.move(6, 0, 5, 0)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
@@ -699,7 +699,7 @@ class TestPawns(unittest.TestCase):
             '8|        |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -708,7 +708,7 @@ class TestPawns(unittest.TestCase):
         board = BoardFactory.with_pawns()
         # move white pawn
         move_result = board.move(6, 3, 4, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
@@ -725,7 +725,7 @@ class TestPawns(unittest.TestCase):
             '8|        |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -734,73 +734,73 @@ class TestPawns(unittest.TestCase):
         board = BoardFactory.size_16_with_pawns()
         # move white pawn
         move_result = board.move(12, 0, 10, 0)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
 
         move_result = board.move(3, 1, 5, 1)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
 
         move_result = board.move(13, 0, 11, 0)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
 
         move_result = board.move(2, 1, 4, 1)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
 
         move_result = board.move(12, 3, 10, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
 
         move_result = board.move(3, 3, 5, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
 
         move_result = board.move(10, 3, 9, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
 
         move_result = board.move(5, 3, 6, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
 
         move_result = board.move(13, 3, 12, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
 
         move_result = board.move(2, 3, 3, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
 
         move_result = board.move(12, 3, 10, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
 
         move_result = board.move(3, 3, 5, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
@@ -825,7 +825,7 @@ class TestPawns(unittest.TestCase):
             '6|                |\n'\
             'W*----------------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -834,13 +834,13 @@ class TestPawns(unittest.TestCase):
         board = BoardFactory.with_pawns()
         # double move white pawn
         move_result = board.move(6, 3, 4, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
         # double move black pawn
         move_result = board.move(1, 4, 3, 4)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
@@ -848,7 +848,7 @@ class TestPawns(unittest.TestCase):
             # double move white pawn
             board.move(4, 3, 2, 3)
         move_result = board.move(4, 3, 3, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
@@ -856,7 +856,7 @@ class TestPawns(unittest.TestCase):
             # double move white pawn
             board.move(3, 4, 5, 4)
         move_result = board.move(3, 4, 4, 4)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
@@ -873,7 +873,7 @@ class TestPawns(unittest.TestCase):
             '8|        |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -883,25 +883,25 @@ class TestPawns(unittest.TestCase):
 
         # move white pawn
         move_result = board.move(6, 3, 4, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
         # move black pawn
         move_result = board.move(1, 4, 3, 4)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
         # move white pawn
         move_result = board.move(4, 3, 3, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
         # move black pawn
         move_result = board.move(3, 4, 4, 4)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
@@ -922,7 +922,7 @@ class TestPawns(unittest.TestCase):
             '8|        |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -932,31 +932,31 @@ class TestPawns(unittest.TestCase):
 
         # move white pawn
         move_result = board.move(6, 3, 4, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
         # move black pawn
         move_result = board.move(1, 4, 3, 4)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
         # move white pawn
         move_result = board.move(4, 3, 3, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
         # move black pawn
         move_result = board.move(3, 4, 4, 4)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
         # move white pawn
         move_result = board.move(6, 4, 5, 4)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
@@ -973,7 +973,7 @@ class TestPawns(unittest.TestCase):
             '8|        |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -995,7 +995,7 @@ class TestRooks(unittest.TestCase):
             '8|R      R|\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1018,7 +1018,7 @@ class TestRooks(unittest.TestCase):
             '8|R      R|\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1041,7 +1041,7 @@ class TestRooks(unittest.TestCase):
             '8|R      R|\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1064,7 +1064,7 @@ class TestRooks(unittest.TestCase):
             '8|R      R|\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1087,7 +1087,7 @@ class TestRooks(unittest.TestCase):
             '8|R      R|\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1110,7 +1110,7 @@ class TestRooks(unittest.TestCase):
             '8|R      R|\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1119,7 +1119,7 @@ class TestRooks(unittest.TestCase):
         board = BoardFactory.with_rooks()
 
         move_result = board.move(7, 0, 6, 0)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'r')
         )
@@ -1136,7 +1136,7 @@ class TestRooks(unittest.TestCase):
             '8|       R|\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1146,13 +1146,13 @@ class TestRooks(unittest.TestCase):
 
         # move white rook up
         move_result = board.move(7, 0, 6, 0)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'r')
         )
         # move black rook down
         move_result = board.move(0, 0, 1, 0)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'r')
         )
@@ -1169,7 +1169,7 @@ class TestRooks(unittest.TestCase):
             '8|       R|\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1179,7 +1179,7 @@ class TestRooks(unittest.TestCase):
 
         # move white rook up
         move_result = board.move(7, 0, 6, 0)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'r')
         )
@@ -1189,7 +1189,7 @@ class TestRooks(unittest.TestCase):
 
         # move black rook down
         move_result = board.move(0, 0, 1, 0)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'r')
         )
@@ -1209,7 +1209,7 @@ class TestRooks(unittest.TestCase):
             '8|       R|\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1218,13 +1218,13 @@ class TestRooks(unittest.TestCase):
         board = BoardFactory.with_rooks()
         # white rook eat black rook
         move_result = board.move(7, 0, 0, 0)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_EAT, 'r')
         )
         # black rook eat white rook
         move_result = board.move(0, 7, 7, 7)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_EAT, 'r')
         )
@@ -1241,7 +1241,7 @@ class TestRooks(unittest.TestCase):
             '8|       r|\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1266,7 +1266,7 @@ class TestRooks(unittest.TestCase):
             '8|R      R|\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1287,7 +1287,7 @@ class TestRooks(unittest.TestCase):
             '8|R      R|\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1314,7 +1314,7 @@ class TestRooks(unittest.TestCase):
             '8|RPpP   R|\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1337,7 +1337,7 @@ class TestRooks(unittest.TestCase):
             '8|RPpP   R|\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1359,7 +1359,7 @@ class TestHorses(unittest.TestCase):
             '8| H    H |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1382,7 +1382,7 @@ class TestHorses(unittest.TestCase):
             '8| H    H |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1405,7 +1405,7 @@ class TestHorses(unittest.TestCase):
             '8| H    H |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1428,7 +1428,7 @@ class TestHorses(unittest.TestCase):
             '8| H    H |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1437,7 +1437,7 @@ class TestHorses(unittest.TestCase):
         board = BoardFactory.with_horses()
 
         move_result = board.move(7, 1, 5, 2)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'h')
         )
@@ -1454,7 +1454,7 @@ class TestHorses(unittest.TestCase):
             '8|      H |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1464,7 +1464,7 @@ class TestHorses(unittest.TestCase):
         BoardFactory.with_pawns(board)
 
         move_result = board.move(7, 1, 5, 2)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'h')
         )
@@ -1481,13 +1481,13 @@ class TestHorses(unittest.TestCase):
             '8|      H |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
 
         move_result = board.move(0, 1, 2, 0)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'h')
         )
@@ -1503,13 +1503,13 @@ class TestHorses(unittest.TestCase):
             '8|      H |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
 
         board.move(5, 2, 3, 1)
-        move_result = self.assertEquals(
+        move_result = self.assertEqual(
             move_result,
             (RESULT_MOVE, 'h')
         )
@@ -1526,17 +1526,17 @@ class TestHorses(unittest.TestCase):
             '8|      H |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
         move_result = board.move(2, 0, 3, 2)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'h')
         )
         move_result = board.move(3, 1, 2, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'h')
         )
@@ -1553,7 +1553,7 @@ class TestHorses(unittest.TestCase):
             '8|      H |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1575,7 +1575,7 @@ class TestBishops(unittest.TestCase):
             '8|  B  B  |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1598,7 +1598,7 @@ class TestBishops(unittest.TestCase):
             '8|  B  B  |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1621,7 +1621,7 @@ class TestBishops(unittest.TestCase):
             '8|  B  B  |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1646,7 +1646,7 @@ class TestBishops(unittest.TestCase):
             '8|  B  B  |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1669,7 +1669,7 @@ class TestBishops(unittest.TestCase):
             '8|  B  B  |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1692,7 +1692,7 @@ class TestBishops(unittest.TestCase):
             '8|  B  B  |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1716,7 +1716,7 @@ class TestBishops(unittest.TestCase):
             '8|  B  B  |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1725,7 +1725,7 @@ class TestBishops(unittest.TestCase):
         board = BoardFactory.with_bishops()
 
         move_result = board.move(7, 2, 6, 1)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'b')
         )
@@ -1742,7 +1742,7 @@ class TestBishops(unittest.TestCase):
             '8|     B  |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1752,13 +1752,13 @@ class TestBishops(unittest.TestCase):
 
         # move white bishop up
         move_result = board.move(7, 2, 6, 1)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'b')
         )
         # move black bishop down
         move_result = board.move(0, 2, 1, 1)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'b')
         )
@@ -1775,7 +1775,7 @@ class TestBishops(unittest.TestCase):
             '8|     B  |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1785,7 +1785,7 @@ class TestBishops(unittest.TestCase):
 
         # move white bishop
         move_result = board.move(7, 2, 6, 1)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'b')
         )
@@ -1795,7 +1795,7 @@ class TestBishops(unittest.TestCase):
 
         # move black bishop down
         move_result = board.move(0, 2, 1, 1)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'b')
         )
@@ -1815,7 +1815,7 @@ class TestBishops(unittest.TestCase):
             '8|     B  |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1838,14 +1838,14 @@ class TestBishops(unittest.TestCase):
             '8|  B  B  |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
 
         # eat white bishop
         move_result = board.move(7, 2, 6, 1)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_EAT, 'p')
         )
@@ -1862,7 +1862,7 @@ class TestBishops(unittest.TestCase):
             '8|     B  |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1887,7 +1887,7 @@ class TestBishops(unittest.TestCase):
             '8|  B  B  |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1908,7 +1908,7 @@ class TestBishops(unittest.TestCase):
             '8|  B  B  |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1930,7 +1930,7 @@ class TestQueens(unittest.TestCase):
             '8|   Q    |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1953,7 +1953,7 @@ class TestQueens(unittest.TestCase):
             '8|   Q    |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1962,12 +1962,12 @@ class TestQueens(unittest.TestCase):
         board = BoardFactory.with_queens()
 
         move_result = board.move(7, 3, 7, 1)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'q')
         )
         move_result = board.move(0, 3, 0, 7)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'q')
         )
@@ -1984,7 +1984,7 @@ class TestQueens(unittest.TestCase):
             '8| Q      |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -1993,12 +1993,12 @@ class TestQueens(unittest.TestCase):
         board = BoardFactory.with_queens()
 
         move_result = board.move(7, 3, 6, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'q')
         )
         move_result = board.move(0, 3, 3, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'q')
         )
@@ -2015,7 +2015,7 @@ class TestQueens(unittest.TestCase):
             '8|        |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -2024,7 +2024,7 @@ class TestQueens(unittest.TestCase):
         board = BoardFactory.with_queens()
 
         move_result = board.move(7, 3, 5, 5)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'q')
         )
@@ -2041,7 +2041,7 @@ class TestQueens(unittest.TestCase):
             '8|        |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -2063,7 +2063,7 @@ class TestKings(unittest.TestCase):
             '8|    K   |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -2072,12 +2072,12 @@ class TestKings(unittest.TestCase):
         board = BoardFactory.with_kings()
 
         move_result = board.move(7, 4, 7, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'k')
         )
         move_result = board.move(0, 4, 0, 5)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'k')
         )
@@ -2094,21 +2094,21 @@ class TestKings(unittest.TestCase):
             '8|   K    |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
 
-    def test_try_vertical_move_queen(self):
+    def test_try_vertical_move_king(self):
         board = BoardFactory.with_kings()
 
         move_result = board.move(7, 4, 6, 4)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'k')
         )
         move_result = board.move(0, 4, 1, 4)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'k')
         )
@@ -2125,7 +2125,29 @@ class TestKings(unittest.TestCase):
             '8|        |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
+            str(board),
+            expected_board
+        )
+
+    def test_try_vertical_move_king_invalid(self):
+        board = BoardFactory.with_kings()
+
+        with self.assertRaises(InvalidMoveException):
+            board.move(7, 4, 7, 7)
+        expected_board = \
+            'B*12345678*\n' \
+            '1|    k   |\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|        |\n'\
+            '8|    K   |\n'\
+            'W*--------*\n'
+
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -2134,12 +2156,12 @@ class TestKings(unittest.TestCase):
         board = BoardFactory.with_kings()
 
         move_result = board.move(7, 4, 6, 3)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'k')
         )
         move_result = board.move(0, 4, 1, 5)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'k')
         )
@@ -2156,7 +2178,7 @@ class TestKings(unittest.TestCase):
             '8|        |\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
@@ -2174,7 +2196,7 @@ class TestSerializeBoards(unittest.TestCase):
             'board': ' ' * 64,
         }
 
-        self.assertEquals(
+        self.assertEqual(
             serialized_board,
             expected_board
         )
@@ -2189,7 +2211,7 @@ class TestSerializeBoards(unittest.TestCase):
             'board': 'rhbqkbhrpppppppp                                PPPPPPPPRHBQKBHR',
         }
 
-        self.assertEquals(
+        self.assertEqual(
             serialized_board,
             expected_board
         )
@@ -2208,7 +2230,7 @@ class TestSerializeBoards(unittest.TestCase):
             'board': 'rhbqkbhrpppppppp                                PPPPPPPPRHBQKBHR',
         }
 
-        self.assertEquals(
+        self.assertEqual(
             re_serialized_board,
             expected_board
         )
@@ -2225,7 +2247,7 @@ class TestSerializeBoards(unittest.TestCase):
             '8|RHBQKBHR|\n'\
             'W*--------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(deserialized_board),
             expected_str_board
         )
@@ -2240,7 +2262,7 @@ class TestSerializeBoards(unittest.TestCase):
             'board': ' ' * 16 * 16,
         }
 
-        self.assertEquals(
+        self.assertEqual(
             serialized_board,
             expected_board
         )
@@ -2255,7 +2277,7 @@ class TestSerializeBoards(unittest.TestCase):
             'board': 'rrhhbbqqkkbbhhrrrrhhbbqqkkbbhhrrpppppppppppppppppppppppppppppppp                                                                                                                                PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPRRHHBBQQKKBBHHRRRRHHBBQQKKBBHHRR',
         }
 
-        self.assertEquals(
+        self.assertEqual(
             serialized_board,
             expected_board
         )
@@ -2265,7 +2287,7 @@ class TestSerializeBoards(unittest.TestCase):
 
         # move white pawn
         move_result = board.move(12, 0, 10, 0)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
@@ -2278,7 +2300,7 @@ class TestSerializeBoards(unittest.TestCase):
             'board': 'rrhhbbqqkkbbhhrrrrhhbbqqkkbbhhrrpppppppppppppppppppppppppppppppp                                                                                                P                                PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPRRHHBBQQKKBBHHRRRRHHBBQQKKBBHHRR',
         }
 
-        self.assertEquals(
+        self.assertEqual(
             serialized_board,
             expected_board
         )
@@ -2297,7 +2319,7 @@ class TestSerializeBoards(unittest.TestCase):
             'board': 'rrhhbbqqkkbbhhrrrrhhbbqqkkbbhhrrpppppppppppppppppppppppppppppppp                                                                                                                                PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPRRHHBBQQKKBBHHRRRRHHBBQQKKBBHHRR',
         }
 
-        self.assertEquals(
+        self.assertEqual(
             re_serialized_board,
             expected_board
         )
@@ -2322,7 +2344,7 @@ class TestSerializeBoards(unittest.TestCase):
             '6|RRHHBBQQKKBBHHRR|\n'\
             'W*----------------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(deserialized_board),
             expected_str_board
         )
@@ -2365,37 +2387,37 @@ class TestPromotePawn(unittest.TestCase):
 
         # move white pawn
         move_result = board.move(12, 0, 10, 0)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
         # move black pawn
         move_result = board.move(3, 0, 5, 0)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
         # move white pawn
         move_result = board.move(10, 0, 9, 0)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
         # move black pawn
         move_result = board.move(5, 0, 6, 0)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_MOVE, 'p')
         )
         # move white pawn
         move_result = board.move(9, 0, 8, 0)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_PROMOTE, 'p')
         )
         # move black pawn
         move_result = board.move(6, 0, 7, 0)
-        self.assertEquals(
+        self.assertEqual(
             move_result,
             (RESULT_PROMOTE, 'p')
         )
@@ -2420,7 +2442,7 @@ class TestPromotePawn(unittest.TestCase):
             '6|RRHHBBQQKKBBHHRR|\n'\
             'W*----------------*\n'
 
-        self.assertEquals(
+        self.assertEqual(
             str(board),
             expected_board
         )
