@@ -1,6 +1,6 @@
 import unittest
 
-from chess import (
+from .chess import (
     WHITE,
     BLACK,
     Board,
@@ -11,7 +11,6 @@ from chess import (
     InvalidEatException,
     InvalidMoveException,
     InvalidTurnException,
-    ChessException,
     Pawn,
     RESULT_MOVE,
     RESULT_EAT,
