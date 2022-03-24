@@ -8,8 +8,7 @@ python -m pychess.chess_tests
 Pending
 
 - Checkmate
-- King castling validations
-- Pawn Promotion
+- King castling: validations
 - En passant (pawn)
 - End game
 - pgn

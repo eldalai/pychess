@@ -65,6 +65,10 @@ class InvalidCheckException(ChessException):
     pass
 
 
+class InvalidPromoteException(ChessException):
+    pass
+
+
 class Cell(object):
     def __init__(self, board, row, col):
         self._piece = None
@@ -169,6 +173,7 @@ class Pawn(Piece):
                 False,  # should_eat
                 False,  # jump
                 False,  # castling
+                to_row in PROMOTE_PAWN_ROWS[self.board.size],  # promote
             )
 
         pawn_initial_row = PAWN_INITIAL_ROW[self.color]  # 6 (white) or 1 (black)
@@ -190,6 +195,7 @@ class Pawn(Piece):
                 False,  # should_eat
                 False,  # jump
                 False,  # castling
+                False,  # promote
             )
 
         # eat
@@ -203,6 +209,7 @@ class Pawn(Piece):
                 True,  # should_eat
                 False,  # jump
                 False,  # castling
+                to_row in PROMOTE_PAWN_ROWS[self.board.size],  # promote
             )
 
         return (
@@ -211,6 +218,7 @@ class Pawn(Piece):
             False,  # should_eat
             False,  # jump
             False,  # castling
+            False,  # promote
         )
 
 
@@ -225,6 +233,7 @@ class Rook(Piece):
             False,  # should_eat
             False,  # jump
             False,  # castling
+            False,  # promote
         )
 
 
@@ -243,6 +252,7 @@ class Horse(Piece):
             False,  # should_eat
             True,  # jump
             False,  # castling
+            False,  # promote
         )
 
 
@@ -257,6 +267,7 @@ class Bishop(Piece):
             False,  # should_eat
             False,  # jump
             False,  # castling
+            False,  # promote
         )
 
 
@@ -272,6 +283,7 @@ class Queen(Piece):
             False,  # should_eat
             False,  # jump
             False,  # castling
+            False,  # promote
         )
 
 
@@ -293,7 +305,7 @@ class King(Piece):
                 False,  # should_eat
                 False,  # jump
                 True,  # castling
-
+                False,  # promote
             )
 
         return (
@@ -303,19 +315,21 @@ class King(Piece):
             False,  # should_eat
             False,  # jump
             False,  # castling
+            False,  # promote
         )
 
 
-class BoardFactory(object):
+PIECES_BY_STR = {
+    Pawn.PIECE_LETTER: Pawn,
+    Rook.PIECE_LETTER: Rook,
+    Horse.PIECE_LETTER: Horse,
+    Bishop.PIECE_LETTER: Bishop,
+    Queen.PIECE_LETTER: Queen,
+    King.PIECE_LETTER: King,
+}
 
-    PIECES_BY_STR = {
-        Pawn.PIECE_LETTER: Pawn,
-        Rook.PIECE_LETTER: Rook,
-        Horse.PIECE_LETTER: Horse,
-        Bishop.PIECE_LETTER: Bishop,
-        Queen.PIECE_LETTER: Queen,
-        King.PIECE_LETTER: King,
-    }
+
+class BoardFactory(object):
 
     @classmethod
     def with_pawns(cls, board=None):
@@ -469,7 +483,7 @@ class BoardFactory(object):
             for col in range(board.size):
                 piece_position = row * board.size + col
                 serialized_piece = serialized_board['board'][piece_position]
-                piece_class = cls.PIECES_BY_STR.get(serialized_piece.lower(), None)
+                piece_class = PIECES_BY_STR.get(serialized_piece.lower(), None)
                 if piece_class:
                     color = BLACK if serialized_piece.islower() else WHITE
                     board.set_position(piece_class(board=board, color=color), row, col)
@@ -541,6 +555,7 @@ class Board(object):
             should_eat,
             jump,
             castling,
+            promote,
         ) = piece.evaluate_move(to_row, to_col)
         if not valid_move:
             raise InvalidMoveException()
@@ -553,16 +568,25 @@ class Board(object):
         )
         if not jump:
             self._verify_piece_in_path(piece, to_row, to_col)
-        return castling
+        return castling, promote
 
-    def move(self, from_row, from_col, to_row, to_col):
+    def move(self, from_row, from_col, to_row, to_col, promotion_piece=None):
         if not self._validate_move_args(from_row, from_col, to_row, to_col):
             raise InvalidArgumentException()
         piece = self.get_piece_to_move(from_row, from_col)
 
-        castling = self.validate_move(piece, to_row, to_col)
+        castling, promote = self.validate_move(piece, to_row, to_col)
+        if promote:
+            if self.size != DEFAULT_CHESS_BOARD_SIZE:
+                if not promotion_piece:
+                    promotion_piece = Queen.PIECE_LETTER
+                else:
+                    raise InvalidPromoteException()
+            else:
+                if not promotion_piece:
+                    raise InvalidPromoteException()
 
-        move_result = self.move_piece(piece, to_row, to_col, castling)
+        move_result = self.move_piece(piece, to_row, to_col, castling, promote, promotion_piece)
 
         self.actual_turn = get_opposite_color(self.actual_turn)
         if self.is_check():
@@ -612,7 +636,8 @@ class Board(object):
     def is_check(self):
         actual_turn_king = self.get_king(self.actual_turn)
         if not actual_turn_king:
-            return
+            # testing... not real
+            return False
         for piece in self.get_color_pieces(
             get_opposite_color(self.actual_turn)
         ):
@@ -623,7 +648,7 @@ class Board(object):
                 pass
         return False
 
-    def move_piece(self, piece, to_row, to_col, castling):
+    def move_piece(self, piece, to_row, to_col, castling, promote, promotion_piece):
         from_row = piece.row
         from_col = piece.col
         self.get_position(piece.row, piece.col).set_empty()
@@ -635,7 +660,12 @@ class Board(object):
             move_result = (RESULT_EAT, new_position.piece.PIECE_LETTER)
             eaten_piece = new_position.piece
 
-        new_position.set_piece(piece)
+        if not promote:
+            new_position.set_piece(piece)
+        else:
+            piece_class = PIECES_BY_STR[promotion_piece]
+            new_position.set_piece(piece_class(self, self.actual_turn))
+
         if castling:
             if to_col == SHORT_CASTING_COL:
                 castling_rook_position = self.get_position(to_row, DEFAULT_CHESS_BOARD_SIZE - 1)
@@ -655,6 +685,7 @@ class Board(object):
                     self.set_position(eaten_piece, to_row, to_col)
                 else:
                     self.get_position(to_row, to_col).set_empty()
+                # TODO: revert rook move on castling rook
                 raise InvalidCheckException()
         return move_result
 
