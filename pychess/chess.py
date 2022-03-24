@@ -23,6 +23,11 @@ PROMOTE_PAWN_ROWS = {
 RESULT_MOVE = 'moved'
 RESULT_EAT = 'eat'
 RESULT_PROMOTE = 'promote'
+RESULT_CHECK = 'check'
+
+
+def get_opposite_color(color):
+    return BLACK if color == WHITE else WHITE
 
 
 class ChessException(Exception):
@@ -53,6 +58,10 @@ class InvalidArgumentException(ChessException):
     pass
 
 
+class InvalidCheckException(ChessException):
+    pass
+
+
 class Cell(object):
     def __init__(self, board, row, col):
         self._piece = None
@@ -77,14 +86,6 @@ class Cell(object):
     @property
     def is_empty(self):
         return self._piece is None
-
-    def move(self, to_row, to_col):
-        if not self._piece:
-            raise CellEmptyException()
-        if self._board.actual_turn != self._piece.color:
-            raise InvalidTurnException()
-
-        return self._piece.move(to_row, to_col)
 
     def __str__(self):
         if self._piece:
@@ -111,40 +112,12 @@ class Piece(object):
 
     def is_horizontal_move(self, to_row, to_col):
         return(
-            (self.row == to_row and self.col != to_col) or
-            (self.row != to_row and self.col == to_col)
+            (self.row == to_row and self.col != to_col)
+            or (self.row != to_row and self.col == to_col)
         )
 
     def is_diagonal_move(self, to_row, to_col):
         return abs(self.row - to_row) == abs(self.col - to_col)
-
-    def _do_move(
-        self,
-        to_row,
-        to_col,
-        jump=False,
-        should_eat=False,
-        should_not_eat=False,
-    ):
-        destiny_cell = self.board.get_position(to_row, to_col)
-        if(
-            destiny_cell.is_empty and
-            should_eat
-        ):
-            raise CellEmptyException
-        if(
-            not destiny_cell.is_empty and
-            should_not_eat
-        ):
-            raise CellNotEmptyException
-        # eat
-        if(
-            not destiny_cell.is_empty and
-            destiny_cell.piece.color == self.color
-        ):
-            raise InvalidEatException()
-
-        return self.board.move_piece(self, to_row, to_col, jump)
 
     def __str__(self):
         if self.color == WHITE:
@@ -163,31 +136,36 @@ class Pawn(Piece):
     def __init__(self, board, color):
         super(Pawn, self).__init__(board, color)
 
-    def _do_move(
-        self,
-        to_row,
-        to_col,
-        jump=False,
-        should_eat=False,
-        should_not_eat=False,
-    ):
-        move_result = super(Pawn, self)._do_move(to_row, to_col, jump, should_eat, should_not_eat)
-        if to_row in PROMOTE_PAWN_ROWS[self.board.size]:
-            self.board.set_position(
-                Queen(board=self.board, color=self.color),
-                row=to_row,
-                col=to_col,
-            )
-            return (RESULT_PROMOTE, self.PIECE_LETTER)
-        return move_result
+    # def _do_move(
+    #     self,
+    #     to_row,
+    #     to_col,
+    #     jump=False,
+    #     should_eat=False,
+    #     should_not_eat=False,
+    # ):
+    #     move_result = super(Pawn, self)._do_move(to_row, to_col, jump, should_eat, should_not_eat)
+    #     if to_row in PROMOTE_PAWN_ROWS[self.board.size]:
+    #         self.board.set_position(
+    #             Queen(board=self.board, color=self.color),
+    #             row=to_row,
+    #             col=to_col,
+    #         )
+    #         return (RESULT_PROMOTE, self.PIECE_LETTER)
+    #     return move_result
 
-    def move(self, to_row, to_col):
+    def evaluate_move(self, to_row, to_col):
         # simple move
         if(
-            to_col == self.col and
-            to_row == (self.row + self.COLOR_DIRECTION[self.color])
+            to_col == self.col
+            and to_row == (self.row + self.COLOR_DIRECTION[self.color])
         ):
-            return self._do_move(to_row, to_col, should_not_eat=True)
+            return (
+                True,  # valid_move
+                True,  # should_not_eat
+                False,  # should_eat
+                False,  # jump
+            )
 
         pawn_initial_row = PAWN_INITIAL_ROW[self.color]  # 6 (white) or 1 (black)
         cells_prop = self.board.size // DEFAULT_CHESS_BOARD_SIZE  # 16 or 8  / 8
@@ -197,80 +175,107 @@ class Pawn(Piece):
         ]
         # double initial move
         if(
-            to_col == self.col and
-            to_row == (self.row + self.COLOR_DIRECTION[self.color] * 2) and
-            self.row in pawn_initial_rows
+            to_col == self.col
+            and to_row == (self.row + self.COLOR_DIRECTION[self.color] * 2)
+            and self.row in pawn_initial_rows
             # not self._moved
         ):
-            return self._do_move(to_row, to_col, should_not_eat=True)
+            return (
+                True,  # valid_move
+                True,  # should_not_eat
+                False,  # should_eat
+                False,  # jump
+            )
 
         # eat
         if(
-            abs(to_col - self.col) == 1 and
-            to_row == (self.row + self.COLOR_DIRECTION[self.color])
+            abs(to_col - self.col) == 1
+            and to_row == (self.row + self.COLOR_DIRECTION[self.color])
         ):
-            return self._do_move(to_row, to_col, should_eat=True)
+            return (
+                True,  # valid_move
+                False,  # should_not_eat
+                True,  # should_eat
+                False,  # jump
+            )
 
-        raise InvalidMoveException()
+        return (
+            False,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+            False,  # jump
+        )
 
 
 class Rook(Piece):
     PIECE_LETTER = 'r'
     INITIAL_COLUMN = 0
 
-    def move(self, to_row, to_col):
-        if not self.is_horizontal_move(to_row, to_col):
-            raise InvalidMoveException()
-        return self._do_move(to_row, to_col)
+    def evaluate_move(self, to_row, to_col):
+        return (
+            self.is_horizontal_move(to_row, to_col),  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+            False,  # jump
+        )
 
 
 class Horse(Piece):
     PIECE_LETTER = 'h'
     INITIAL_COLUMN = 1
 
-    def move(self, to_row, to_col):
-        if not (
-            abs(self.row - to_row) == 2 and abs(self.col - to_col) == 1 or
-            abs(self.row - to_row) == 1 and abs(self.col - to_col) == 2
-        ):
-            raise InvalidMoveException()
-        return self._do_move(to_row, to_col, jump=True)
+    def evaluate_move(self, to_row, to_col):
+        valid_move = (
+            abs(self.row - to_row) == 2 and abs(self.col - to_col) == 1
+            or abs(self.row - to_row) == 1 and abs(self.col - to_col) == 2
+        )
+        return (
+            valid_move,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+            True,  # jump
+        )
 
 
 class Bishop(Piece):
     PIECE_LETTER = 'b'
     INITIAL_COLUMN = 2
 
-    def move(self, to_row, to_col):
-        if not self.is_diagonal_move(to_row, to_col):
-            raise InvalidMoveException()
-        return self._do_move(to_row, to_col)
+    def evaluate_move(self, to_row, to_col):
+        return (
+            self.is_diagonal_move(to_row, to_col),  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+            False,  # jump
+        )
 
 
 class Queen(Piece):
     PIECE_LETTER = 'q'
     INITIAL_COLUMN = 3
 
-    def move(self, to_row, to_col):
-        if(
-            not self.is_diagonal_move(to_row, to_col) and
-            not self.is_horizontal_move(to_row, to_col)
-        ):
-            raise InvalidMoveException()
-        return self._do_move(to_row, to_col)
+    def evaluate_move(self, to_row, to_col):
+        return (
+            self.is_diagonal_move(to_row, to_col)
+            or self.is_horizontal_move(to_row, to_col),  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+            False,  # jump
+        )
 
 
 class King(Piece):
     PIECE_LETTER = 'k'
     INITIAL_COLUMN = 4
 
-    def move(self, to_row, to_col):
-        if(
-            abs(self.row - to_row) > 1 or
-            abs(self.col - to_col) > 1
-        ):
-            raise InvalidMoveException()
-        return self._do_move(to_row, to_col)
+    def evaluate_move(self, to_row, to_col):
+        return (
+            abs(self.row - to_row) == 1
+            or abs(self.col - to_col) == 1,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+            False,  # jump
+        )
 
 
 class BoardFactory(object):
@@ -460,46 +465,157 @@ class Board(object):
     def set_position(self, piece, row, col):
         self.get_position(row, col).set_piece(piece)
 
-    def move(self, from_row, from_col, to_row, to_col):
+    def validate_move_destiny(
+        self,
+        to_row,
+        to_col,
+        piece,
+        should_not_eat=False,
+        should_eat=False,
+    ):
+        destiny_cell = self.get_position(to_row, to_col)
+        if(
+            destiny_cell.is_empty
+            and should_eat
+        ):
+            raise CellEmptyException
+        if(
+            not destiny_cell.is_empty
+            and should_not_eat
+        ):
+            raise CellNotEmptyException
+        # eat
+        if(
+            not destiny_cell.is_empty
+            and destiny_cell.piece.color == piece.color
+        ):
+            raise InvalidEatException()
+
+    def _validate_move_args(self, from_row, from_col, to_row, to_col):
         if from_row == to_row and to_col == from_col:
-            raise InvalidArgumentException()
+            return False
         for arg in [from_row, from_col, to_row, to_col]:
             if arg < 0 or arg > self.size - 1:
-                raise InvalidArgumentException()
-        move_result = self.get_position(from_row, from_col).move(to_row, to_col)
-        if self.actual_turn == WHITE:
-            self.actual_turn = BLACK
-        else:
-            self.actual_turn = WHITE
+                return False
+        return True
+
+    def get_piece_to_move(self, from_row, from_col):
+        cell = self.get_position(from_row, from_col)
+        if not cell.piece:
+            raise CellEmptyException()
+        if self.actual_turn != cell.piece.color:
+            raise InvalidTurnException()
+        return cell.piece
+
+    def validate_move(self, piece, to_row, to_col):
+        (
+            valid_move,
+            should_not_eat,
+            should_eat,
+            jump,
+        ) = piece.evaluate_move(to_row, to_col)
+        if not valid_move:
+            raise InvalidMoveException()
+        self.validate_move_destiny(
+            to_row,
+            to_col,
+            piece,
+            should_not_eat,
+            should_eat,
+        )
+        if not jump:
+            self._verify_piece_in_path(piece, to_row, to_col)
+
+    def move(self, from_row, from_col, to_row, to_col):
+        if not self._validate_move_args(from_row, from_col, to_row, to_col):
+            raise InvalidArgumentException()
+        piece = self.get_piece_to_move(from_row, from_col)
+
+        self.validate_move(piece, to_row, to_col)
+
+        move_result = self.move_piece(piece, to_row, to_col)
+
+        self.actual_turn = get_opposite_color(self.actual_turn)
+        if self.is_check():
+            return (RESULT_CHECK, piece.PIECE_LETTER)
         return move_result
 
-    def move_piece(self, piece, to_row, to_col, jump=False):
-        if not jump:
-            if piece.row == to_row:
-                step_row = 0
-            else:
-                step_row = -1 if piece.row > to_row else 1
+    def _verify_piece_in_path(self, piece, to_row, to_col):
+        if piece.row == to_row:
+            step_row = 0
+        else:
+            step_row = -1 if piece.row > to_row else 1
 
-            if piece.col == to_col:
-                step_col = 0
-            else:
-                step_col = -1 if piece.col > to_col else 1
+        if piece.col == to_col:
+            step_col = 0
+        else:
+            step_col = -1 if piece.col > to_col else 1
 
-            mid_col = piece.col + step_col
-            mid_row = piece.row + step_row
-            while mid_col != to_col or mid_row != to_row:
-                if not self.get_position(mid_row, mid_col).is_empty:
-                    raise InvalidMoveException()
-                mid_col += step_col
-                mid_row += step_row
+        mid_col = piece.col + step_col
+        mid_row = piece.row + step_row
+        while mid_col != to_col or mid_row != to_row:
+            if not self.get_position(mid_row, mid_col).is_empty:
+                raise InvalidMoveException()
+            mid_col += step_col
+            mid_row += step_row
 
+    def get_color_pieces(self, color):
+        pieces = []
+        for row in self._board:
+            for cell in row:
+                if (
+                    not cell.is_empty
+                    and cell.piece.color == color
+                ):
+                    pieces.append(cell.piece)
+        return pieces
+
+    def get_king(self, color):
+        for row in self._board:
+            for cell in row:
+                if (
+                    not cell.is_empty
+                    and cell.piece.color == color
+                    and isinstance(cell.piece, King)
+                ):
+                    return cell.piece
+
+    def is_check(self):
+        actual_turn_king = self.get_king(self.actual_turn)
+        if not actual_turn_king:
+            return
+        for piece in self.get_color_pieces(
+            get_opposite_color(self.actual_turn)
+        ):
+            try:
+                self.validate_move(piece, actual_turn_king.row, actual_turn_king.col)
+                return True
+            except Exception:
+                pass
+        return False
+
+    def move_piece(self, piece, to_row, to_col):
+        from_row = piece.row
+        from_col = piece.col
         self.get_position(piece.row, piece.col).set_empty()
         new_position = self.get_position(to_row, to_col)
         if new_position.is_empty:
             move_result = (RESULT_MOVE, piece.PIECE_LETTER)
+            eaten_piece = None
         else:
             move_result = (RESULT_EAT, new_position.piece.PIECE_LETTER)
+            eaten_piece = new_position.piece
+
         new_position.set_piece(piece)
+        if self.size == DEFAULT_CHESS_BOARD_SIZE:
+            if self.is_check():
+                # if check, revert move
+                self.set_position(piece, from_row, from_col)
+                if eaten_piece:
+                    self.set_position(eaten_piece, to_row, to_col)
+                else:
+                    self.get_position(to_row, to_col).set_empty()
+                raise InvalidCheckException()
         return move_result
 
     def __str__(self):

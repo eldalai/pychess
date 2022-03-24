@@ -8,13 +8,16 @@ from .chess import (
     CellEmptyException,
     CellNotEmptyException,
     InvalidArgumentException,
+    InvalidCheckException,
     InvalidEatException,
     InvalidMoveException,
     InvalidTurnException,
     Pawn,
+    Queen,
     RESULT_MOVE,
     RESULT_EAT,
     RESULT_PROMOTE,
+    RESULT_CHECK,
 )
 
 
@@ -327,7 +330,33 @@ class TestBoard(unittest.TestCase):
         )
 
 
-class TestPawns(unittest.TestCase):
+class TestPiece(unittest.TestCase):
+    def assert_evaluate_move(
+        self,
+        board,
+        from_row,
+        from_col,
+        to_row,
+        to_col,
+        expected_valid_move,
+        expected_should_not_eat,
+        expected_should_eat,
+        expected_jump=False,
+    ):
+        cell = board.get_position(from_row, from_col)
+        (
+            valid_move,
+            should_not_eat,
+            should_eat,
+            jump,
+        ) = cell.piece.evaluate_move(to_row, to_col)
+        self.assertEqual(expected_valid_move, valid_move)
+        self.assertEqual(expected_should_not_eat, should_not_eat)
+        self.assertEqual(expected_should_eat, should_eat)
+        self.assertEqual(expected_jump, jump)
+
+
+class TestPawns(TestPiece):
 
     def test_board_with_pawns(self):
         board = BoardFactory.with_pawns()
@@ -396,6 +425,14 @@ class TestPawns(unittest.TestCase):
 
     def test_simple_move_pawn(self):
         board = BoardFactory.with_pawns()
+        self.assert_evaluate_move(
+            board,
+            6, 3,  # from
+            5, 3,  # to
+            True,  # valid_move
+            True,  # should_not_eat
+            False,  # should_eat
+        )
         # move white pawn
         move_result = board.move(6, 3, 5, 3)
         self.assertEqual(
@@ -433,7 +470,14 @@ class TestPawns(unittest.TestCase):
             move_result,
             (RESULT_MOVE, 'p')
         )
-
+        self.assert_evaluate_move(
+            board,
+            1, 3,  # from
+            2, 3,  # to
+            True,  # valid_move
+            True,  # should_not_eat
+            False,  # should_eat
+        )
         # move black pawn
         move_result = board.move(1, 3, 2, 3)
         self.assertEqual(
@@ -576,6 +620,14 @@ class TestPawns(unittest.TestCase):
             move_result,
             (RESULT_MOVE, 'p')
         )
+        self.assert_evaluate_move(
+            board,
+            4, 3,  # from
+            3, 4,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            True,  # should_eat
+        )
 
         # white pawn eat black pawn
         move_result = board.move(4, 3, 3, 4)
@@ -705,6 +757,14 @@ class TestPawns(unittest.TestCase):
 
     def test_double_initial_move_pawn(self):
         board = BoardFactory.with_pawns()
+        self.assert_evaluate_move(
+            board,
+            6, 3,  # from
+            4, 3,  # to
+            True,  # valid_move
+            True,  # should_not_eat
+            False,  # should_eat
+        )
         # move white pawn
         move_result = board.move(6, 3, 4, 3)
         self.assertEqual(
@@ -978,7 +1038,7 @@ class TestPawns(unittest.TestCase):
         )
 
 
-class TestRooks(unittest.TestCase):
+class TestRooks(TestPiece):
 
     def test_board_with_rooks(self):
         board = BoardFactory.with_rooks()
@@ -1024,7 +1084,14 @@ class TestRooks(unittest.TestCase):
 
     def test_try_invalid_color_move_rook(self):
         board = BoardFactory.with_rooks()
-
+        self.assert_evaluate_move(
+            board,
+            0, 0,  # from
+            0, 1,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+        )
         with self.assertRaises(InvalidTurnException):
             board.move(0, 0, 0, 1)
 
@@ -1047,7 +1114,14 @@ class TestRooks(unittest.TestCase):
 
     def test_try_invalid_diagonal_move_rook(self):
         board = BoardFactory.with_rooks()
-
+        self.assert_evaluate_move(
+            board,
+            7, 0,  # from
+            6, 1,  # to
+            False,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+        )
         with self.assertRaises(InvalidMoveException):
             board.move(7, 0, 6, 1)
 
@@ -1070,7 +1144,14 @@ class TestRooks(unittest.TestCase):
 
     def test_try_invalid_move_rook(self):
         board = BoardFactory.with_rooks()
-
+        self.assert_evaluate_move(
+            board,
+            7, 0,  # from
+            5, 4,  # to
+            False,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+        )
         with self.assertRaises(InvalidMoveException):
             board.move(7, 0, 5, 4)
 
@@ -1093,7 +1174,14 @@ class TestRooks(unittest.TestCase):
 
     def test_try_invalid_same_color_move_rook(self):
         board = BoardFactory.with_rooks()
-
+        self.assert_evaluate_move(
+            board,
+            7, 0,  # from
+            7, 7,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+        )
         with self.assertRaises(InvalidEatException):
             board.move(7, 0, 7, 7)
 
@@ -1116,7 +1204,14 @@ class TestRooks(unittest.TestCase):
 
     def test_simple_move_rook_up(self):
         board = BoardFactory.with_rooks()
-
+        self.assert_evaluate_move(
+            board,
+            7, 0,  # from
+            6, 0,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+        )
         move_result = board.move(7, 0, 6, 0)
         self.assertEqual(
             move_result,
@@ -1148,6 +1243,14 @@ class TestRooks(unittest.TestCase):
         self.assertEqual(
             move_result,
             (RESULT_MOVE, 'r')
+        )
+        self.assert_evaluate_move(
+            board,
+            0, 0,  # from
+            1, 0,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
         )
         # move black rook down
         move_result = board.move(0, 0, 1, 0)
@@ -1215,11 +1318,27 @@ class TestRooks(unittest.TestCase):
 
     def test_rook_eat_rook(self):
         board = BoardFactory.with_rooks()
+        self.assert_evaluate_move(
+            board,
+            7, 0,  # from
+            0, 0,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+        )
         # white rook eat black rook
         move_result = board.move(7, 0, 0, 0)
         self.assertEqual(
             move_result,
             (RESULT_EAT, 'r')
+        )
+        self.assert_evaluate_move(
+            board,
+            0, 7,  # from
+            7, 7,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
         )
         # black rook eat white rook
         move_result = board.move(0, 7, 7, 7)
@@ -1342,7 +1461,7 @@ class TestRooks(unittest.TestCase):
         )
 
 
-class TestHorses(unittest.TestCase):
+class TestHorses(TestPiece):
 
     def test_board_with_horses(self):
         board = BoardFactory.with_horses()
@@ -1411,6 +1530,15 @@ class TestHorses(unittest.TestCase):
 
     def test_try_invalid_vertical_move_horse(self):
         board = BoardFactory.with_horses()
+        self.assert_evaluate_move(
+            board,
+            7, 1,  # from
+            6, 1,  # to
+            False,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+            True,  # jump
+        )
 
         with self.assertRaises(InvalidMoveException):
             board.move(7, 1, 6, 1)
@@ -1434,7 +1562,15 @@ class TestHorses(unittest.TestCase):
 
     def test_simple_move_horse(self):
         board = BoardFactory.with_horses()
-
+        self.assert_evaluate_move(
+            board,
+            7, 1,  # from
+            5, 2,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+            True,  # jump
+        )
         move_result = board.move(7, 1, 5, 2)
         self.assertEqual(
             move_result,
@@ -1462,6 +1598,15 @@ class TestHorses(unittest.TestCase):
         board = BoardFactory.with_horses()
         BoardFactory.with_pawns(board)
 
+        self.assert_evaluate_move(
+            board,
+            7, 1,  # from
+            5, 2,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+            True,  # jump
+        )
         move_result = board.move(7, 1, 5, 2)
         self.assertEqual(
             move_result,
@@ -1484,7 +1629,15 @@ class TestHorses(unittest.TestCase):
             str(board),
             expected_board
         )
-
+        self.assert_evaluate_move(
+            board,
+            0, 1,  # from
+            2, 0,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+            True,  # jump
+        )
         move_result = board.move(0, 1, 2, 0)
         self.assertEqual(
             move_result,
@@ -1506,7 +1659,15 @@ class TestHorses(unittest.TestCase):
             str(board),
             expected_board
         )
-
+        self.assert_evaluate_move(
+            board,
+            5, 2,  # from
+            3, 1,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+            True,  # jump
+        )
         board.move(5, 2, 3, 1)
         move_result = self.assertEqual(
             move_result,
@@ -1529,10 +1690,28 @@ class TestHorses(unittest.TestCase):
             str(board),
             expected_board
         )
+        self.assert_evaluate_move(
+            board,
+            2, 0,  # from
+            3, 2,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+            True,  # jump
+        )
         move_result = board.move(2, 0, 3, 2)
         self.assertEqual(
             move_result,
             (RESULT_MOVE, 'h')
+        )
+        self.assert_evaluate_move(
+            board,
+            3, 1,  # from
+            2, 3,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+            True,  # jump
         )
         move_result = board.move(3, 1, 2, 3)
         self.assertEqual(
@@ -1558,7 +1737,7 @@ class TestHorses(unittest.TestCase):
         )
 
 
-class TestBishops(unittest.TestCase):
+class TestBishops(TestPiece):
 
     def test_board_with_bishops(self):
         board = BoardFactory.with_bishops()
@@ -1627,9 +1806,24 @@ class TestBishops(unittest.TestCase):
 
     def test_try_invalid_horizontal_move_bishop(self):
         board = BoardFactory.with_bishops()
-
+        self.assert_evaluate_move(
+            board,
+            7, 2,  # from
+            7, 1,  # to
+            False,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+        )
         with self.assertRaises(InvalidMoveException):
             board.move(7, 2, 7, 1)
+        self.assert_evaluate_move(
+            board,
+            7, 2,  # from
+            7, 3,  # to
+            False,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+        )
         with self.assertRaises(InvalidMoveException):
             board.move(7, 2, 7, 3)
 
@@ -1652,6 +1846,14 @@ class TestBishops(unittest.TestCase):
 
     def test_try_invalid_vertical_move_bishop(self):
         board = BoardFactory.with_bishops()
+        self.assert_evaluate_move(
+            board,
+            7, 2,  # from
+            6, 2,  # to
+            False,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+        )
 
         with self.assertRaises(InvalidMoveException):
             board.move(7, 2, 6, 2)
@@ -1675,6 +1877,14 @@ class TestBishops(unittest.TestCase):
 
     def test_try_invalid_move_bishop(self):
         board = BoardFactory.with_bishops()
+        self.assert_evaluate_move(
+            board,
+            7, 2,  # from
+            5, 5,  # to
+            False,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+        )
 
         with self.assertRaises(InvalidMoveException):
             board.move(7, 2, 5, 5)
@@ -1722,7 +1932,14 @@ class TestBishops(unittest.TestCase):
 
     def test_simple_move_bishop(self):
         board = BoardFactory.with_bishops()
-
+        self.assert_evaluate_move(
+            board,
+            7, 2,  # from
+            6, 1,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+        )
         move_result = board.move(7, 2, 6, 1)
         self.assertEqual(
             move_result,
@@ -1791,7 +2008,14 @@ class TestBishops(unittest.TestCase):
         # try to move white bishop again
         with self.assertRaises(InvalidTurnException):
             board.move(6, 1, 5, 2)
-
+        self.assert_evaluate_move(
+            board,
+            0, 2,  # from
+            1, 1,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+        )
         # move black bishop down
         move_result = board.move(0, 2, 1, 1)
         self.assertEqual(
@@ -1913,7 +2137,7 @@ class TestBishops(unittest.TestCase):
         )
 
 
-class TestQueens(unittest.TestCase):
+class TestQueens(TestPiece):
 
     def test_board_with_queen(self):
         board = BoardFactory.with_queens()
@@ -1959,11 +2183,26 @@ class TestQueens(unittest.TestCase):
 
     def test_try_horizontal_move(self):
         board = BoardFactory.with_queens()
-
+        self.assert_evaluate_move(
+            board,
+            7, 3,  # from
+            7, 1,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+        )
         move_result = board.move(7, 3, 7, 1)
         self.assertEqual(
             move_result,
             (RESULT_MOVE, 'q')
+        )
+        self.assert_evaluate_move(
+            board,
+            0, 3,  # from
+            0, 1,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
         )
         move_result = board.move(0, 3, 0, 7)
         self.assertEqual(
@@ -1990,11 +2229,26 @@ class TestQueens(unittest.TestCase):
 
     def test_try_vertical_move_queen(self):
         board = BoardFactory.with_queens()
-
+        self.assert_evaluate_move(
+            board,
+            7, 3,  # from
+            6, 3,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+        )
         move_result = board.move(7, 3, 6, 3)
         self.assertEqual(
             move_result,
             (RESULT_MOVE, 'q')
+        )
+        self.assert_evaluate_move(
+            board,
+            0, 3,  # from
+            3, 3,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
         )
         move_result = board.move(0, 3, 3, 3)
         self.assertEqual(
@@ -2021,7 +2275,14 @@ class TestQueens(unittest.TestCase):
 
     def test_try_diagonal_move_queen(self):
         board = BoardFactory.with_queens()
-
+        self.assert_evaluate_move(
+            board,
+            7, 3,  # from
+            5, 5,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+        )
         move_result = board.move(7, 3, 5, 5)
         self.assertEqual(
             move_result,
@@ -2046,7 +2307,7 @@ class TestQueens(unittest.TestCase):
         )
 
 
-class TestKings(unittest.TestCase):
+class TestKings(TestPiece):
 
     def test_board_with_king(self):
         board = BoardFactory.with_kings()
@@ -2069,11 +2330,26 @@ class TestKings(unittest.TestCase):
 
     def test_try_horizontal_move(self):
         board = BoardFactory.with_kings()
-
+        self.assert_evaluate_move(
+            board,
+            7, 4,  # from
+            7, 3,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+        )
         move_result = board.move(7, 4, 7, 3)
         self.assertEqual(
             move_result,
             (RESULT_MOVE, 'k')
+        )
+        self.assert_evaluate_move(
+            board,
+            0, 4,  # from
+            0, 5,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
         )
         move_result = board.move(0, 4, 0, 5)
         self.assertEqual(
@@ -2100,11 +2376,26 @@ class TestKings(unittest.TestCase):
 
     def test_try_vertical_move_king(self):
         board = BoardFactory.with_kings()
-
+        self.assert_evaluate_move(
+            board,
+            7, 4,  # from
+            6, 4,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+        )
         move_result = board.move(7, 4, 6, 4)
         self.assertEqual(
             move_result,
             (RESULT_MOVE, 'k')
+        )
+        self.assert_evaluate_move(
+            board,
+            0, 4,  # from
+            1, 4,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
         )
         move_result = board.move(0, 4, 1, 4)
         self.assertEqual(
@@ -2153,11 +2444,26 @@ class TestKings(unittest.TestCase):
 
     def test_try_diagonal_move_king(self):
         board = BoardFactory.with_kings()
-
+        self.assert_evaluate_move(
+            board,
+            7, 4,  # from
+            6, 3,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+        )
         move_result = board.move(7, 4, 6, 3)
         self.assertEqual(
             move_result,
             (RESULT_MOVE, 'k')
+        )
+        self.assert_evaluate_move(
+            board,
+            0, 4,  # from
+            1, 5,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
         )
         move_result = board.move(0, 4, 1, 5)
         self.assertEqual(
@@ -2445,6 +2751,127 @@ class TestPromotePawn(unittest.TestCase):
             str(board),
             expected_board
         )
+
+
+class TestCheck(TestPiece):
+    def test_check_invalid_move_middle_piece(self):
+        board = BoardFactory.with_kings()
+        white_queen = Queen(board=board, color=WHITE)
+        board.set_position(white_queen, 6, 4)
+        black_queen = Queen(board=board, color=BLACK)
+        board.set_position(black_queen, 1, 4)
+        # try to move white queen,
+        # but check from black queen
+        with self.assertRaises(InvalidCheckException):
+            board.move(6, 4, 5, 3)
+
+        board.actual_turn = BLACK
+        # try to move black queen,
+        # but check from white queen
+        with self.assertRaises(InvalidCheckException):
+            board.move(1, 4, 2, 3)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|    k   |\n'\
+            '2|    q   |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|    Q   |\n'\
+            '8|    K   |\n'\
+            'W*--------*\n'
+        self.assertEqual(
+            str(board),
+            expected_board
+        )
+
+    def test_check_invalid_move_king_to_check(self):
+        board = BoardFactory.with_kings()
+        board = BoardFactory.with_queens(board)
+        # try to move white king,
+        # but check from black queen
+        self.assert_evaluate_move(
+            board,
+            7, 4,  # from
+            6, 3,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+        )
+        with self.assertRaises(InvalidCheckException):
+            board.move(7, 4, 6, 3)
+
+        board.actual_turn = BLACK
+        # try to move black king,
+        # but check from white queen
+        self.assert_evaluate_move(
+            board,
+            0, 4,  # from
+            1, 3,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+        )
+        with self.assertRaises(InvalidCheckException):
+            board.move(0, 4, 1, 3)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|   qk   |\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|        |\n'\
+            '8|   QK   |\n'\
+            'W*--------*\n'
+        self.assertEqual(
+            str(board),
+            expected_board
+        )
+
+    def test_check_valid_move_king_check(self):
+        board = BoardFactory.with_kings()
+        board = BoardFactory.with_queens(board)
+        # move white queen,
+        # check to black king
+        self.assert_evaluate_move(
+            board,
+            7, 3,  # from
+            6, 4,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+        )
+        move_result = board.move(7, 3, 6, 4)
+        self.assertEqual(
+            move_result,
+            (RESULT_CHECK, 'q')
+        )
+        # try to move black queen,
+        # but check from white queen
+        with self.assertRaises(InvalidCheckException):
+            board.move(0, 3, 0, 0)
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|   qk   |\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|    Q   |\n'\
+            '8|    K   |\n'\
+            'W*--------*\n'
+        self.assertEqual(
+            str(board),
+            expected_board
+        )
+
 
 if __name__ == '__main__':
     unittest.main()
