@@ -5,6 +5,9 @@ DEFAULT_CHESS_BOARD_SIZE = 8
 CHESS_BOARD_SIZE_16 = 16
 CHESS_BOARD_SIZE_32 = 32
 
+SHORT_CASTING_COL = 6
+LONG_CASTING_COL = 2
+
 PAWN_INITIAL_ROW = {
     WHITE: 6,
     BLACK: 1,
@@ -165,6 +168,7 @@ class Pawn(Piece):
                 True,  # should_not_eat
                 False,  # should_eat
                 False,  # jump
+                False,  # castling
             )
 
         pawn_initial_row = PAWN_INITIAL_ROW[self.color]  # 6 (white) or 1 (black)
@@ -185,6 +189,7 @@ class Pawn(Piece):
                 True,  # should_not_eat
                 False,  # should_eat
                 False,  # jump
+                False,  # castling
             )
 
         # eat
@@ -197,6 +202,7 @@ class Pawn(Piece):
                 False,  # should_not_eat
                 True,  # should_eat
                 False,  # jump
+                False,  # castling
             )
 
         return (
@@ -204,6 +210,7 @@ class Pawn(Piece):
             False,  # should_not_eat
             False,  # should_eat
             False,  # jump
+            False,  # castling
         )
 
 
@@ -217,6 +224,7 @@ class Rook(Piece):
             False,  # should_not_eat
             False,  # should_eat
             False,  # jump
+            False,  # castling
         )
 
 
@@ -234,6 +242,7 @@ class Horse(Piece):
             False,  # should_not_eat
             False,  # should_eat
             True,  # jump
+            False,  # castling
         )
 
 
@@ -247,6 +256,7 @@ class Bishop(Piece):
             False,  # should_not_eat
             False,  # should_eat
             False,  # jump
+            False,  # castling
         )
 
 
@@ -261,6 +271,7 @@ class Queen(Piece):
             False,  # should_not_eat
             False,  # should_eat
             False,  # jump
+            False,  # castling
         )
 
 
@@ -269,12 +280,29 @@ class King(Piece):
     INITIAL_COLUMN = 4
 
     def evaluate_move(self, to_row, to_col):
+        # castling
+        # if not self.moved TODO
+        if (
+            self.board.size == DEFAULT_CHESS_BOARD_SIZE
+            and abs(self.col - to_col) == 2
+            and self.row == BIG_PIECES_INITIAL_ROW[self.color]
+        ):
+            return (
+                True,  # valid_move
+                False,  # should_not_eat
+                False,  # should_eat
+                False,  # jump
+                True,  # castling
+
+            )
+
         return (
             abs(self.row - to_row) == 1
             or abs(self.col - to_col) == 1,  # valid_move
             False,  # should_not_eat
             False,  # should_eat
             False,  # jump
+            False,  # castling
         )
 
 
@@ -512,6 +540,7 @@ class Board(object):
             should_not_eat,
             should_eat,
             jump,
+            castling,
         ) = piece.evaluate_move(to_row, to_col)
         if not valid_move:
             raise InvalidMoveException()
@@ -524,15 +553,16 @@ class Board(object):
         )
         if not jump:
             self._verify_piece_in_path(piece, to_row, to_col)
+        return castling
 
     def move(self, from_row, from_col, to_row, to_col):
         if not self._validate_move_args(from_row, from_col, to_row, to_col):
             raise InvalidArgumentException()
         piece = self.get_piece_to_move(from_row, from_col)
 
-        self.validate_move(piece, to_row, to_col)
+        castling = self.validate_move(piece, to_row, to_col)
 
-        move_result = self.move_piece(piece, to_row, to_col)
+        move_result = self.move_piece(piece, to_row, to_col, castling)
 
         self.actual_turn = get_opposite_color(self.actual_turn)
         if self.is_check():
@@ -593,7 +623,7 @@ class Board(object):
                 pass
         return False
 
-    def move_piece(self, piece, to_row, to_col):
+    def move_piece(self, piece, to_row, to_col, castling):
         from_row = piece.row
         from_col = piece.col
         self.get_position(piece.row, piece.col).set_empty()
@@ -606,6 +636,17 @@ class Board(object):
             eaten_piece = new_position.piece
 
         new_position.set_piece(piece)
+        if castling:
+            if to_col == SHORT_CASTING_COL:
+                castling_rook_position = self.get_position(to_row, DEFAULT_CHESS_BOARD_SIZE - 1)
+                castling_rook = castling_rook_position.piece
+                castling_rook_position.set_empty()
+                self.set_position(castling_rook, to_row, SHORT_CASTING_COL - 1)
+            else:
+                castling_rook_position = self.get_position(to_row, 0)
+                castling_rook = castling_rook_position.piece
+                castling_rook_position.set_empty()
+                self.set_position(castling_rook, to_row, LONG_CASTING_COL + 1)
         if self.size == DEFAULT_CHESS_BOARD_SIZE:
             if self.is_check():
                 # if check, revert move

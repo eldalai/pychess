@@ -342,6 +342,7 @@ class TestPiece(unittest.TestCase):
         expected_should_not_eat,
         expected_should_eat,
         expected_jump=False,
+        expected_castling=False,
     ):
         cell = board.get_position(from_row, from_col)
         (
@@ -349,12 +350,23 @@ class TestPiece(unittest.TestCase):
             should_not_eat,
             should_eat,
             jump,
+            castling,
         ) = cell.piece.evaluate_move(to_row, to_col)
         self.assertEqual(expected_valid_move, valid_move)
         self.assertEqual(expected_should_not_eat, should_not_eat)
         self.assertEqual(expected_should_eat, should_eat)
         self.assertEqual(expected_jump, jump)
+        self.assertEqual(expected_castling, castling)
 
+    def assertBoardEqual(self, actual_board, expected_board):
+        if expected_board != actual_board:
+            self.fail(
+                'Board is not as we expected\n' +
+                'expected board:\n' +
+                expected_board +
+                'actual board:\n' +
+                actual_board
+            )
 
 class TestPawns(TestPiece):
 
@@ -2686,7 +2698,7 @@ class TestPlay(unittest.TestCase):
 
 
 class TestPromotePawn(unittest.TestCase):
-
+    @unittest.skip('todo')
     def test_promote_pawn_big_chess(self):
         board = BoardFactory.size_16()
 
@@ -2828,7 +2840,7 @@ class TestCheck(TestPiece):
             '7|        |\n'\
             '8|   QK   |\n'\
             'W*--------*\n'
-        self.assertEqual(
+        self.assertBoardEqual(
             str(board),
             expected_board
         )
@@ -2868,6 +2880,108 @@ class TestCheck(TestPiece):
             '8|    K   |\n'\
             'W*--------*\n'
         self.assertEqual(
+            str(board),
+            expected_board
+        )
+
+
+class TestCastling(TestPiece):
+    def test_short_castling(self):
+        board = BoardFactory.with_kings()
+        board = BoardFactory.with_rooks(board)
+
+        self.assert_evaluate_move(
+            board,
+            7, 4,  # from
+            7, 6,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+            expected_castling=True,
+        )
+        move_result = board.move(7, 4, 7, 6)
+        self.assertEqual(
+            move_result,
+            (RESULT_MOVE, 'k')
+        )
+
+        self.assert_evaluate_move(
+            board,
+            0, 4,  # from
+            0, 6,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+            expected_castling=True,
+        )
+        move_result = board.move(0, 4, 0, 6)
+        self.assertEqual(
+            move_result,
+            (RESULT_MOVE, 'k')
+        )
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|r    rk |\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|        |\n'\
+            '8|R    RK |\n'\
+            'W*--------*\n'
+        self.assertBoardEqual(
+            str(board),
+            expected_board
+        )
+
+    def test_long_castling(self):
+        board = BoardFactory.with_kings()
+        board = BoardFactory.with_rooks(board)
+
+        self.assert_evaluate_move(
+            board,
+            7, 4,  # from
+            7, 2,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+            expected_castling=True,
+        )
+        move_result = board.move(7, 4, 7, 2)
+        self.assertEqual(
+            move_result,
+            (RESULT_MOVE, 'k')
+        )
+
+        self.assert_evaluate_move(
+            board,
+            0, 4,  # from
+            0, 2,  # to
+            True,  # valid_move
+            False,  # should_not_eat
+            False,  # should_eat
+            expected_castling=True,
+        )
+        move_result = board.move(0, 4, 0, 2)
+        self.assertEqual(
+            move_result,
+            (RESULT_MOVE, 'k')
+        )
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|  kr   r|\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|        |\n'\
+            '8|  KR   R|\n'\
+            'W*--------*\n'
+        self.assertBoardEqual(
             str(board),
             expected_board
         )
