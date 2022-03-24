@@ -381,7 +381,6 @@ class BoardFactory(object):
             board.set_position(black_rook, BIG_PIECES_INITIAL_ROW[BLACK], col)
         return board
 
-
     @classmethod
     def with_horses(cls, board=None):
         if not board:
