@@ -3167,5 +3167,119 @@ class TestCastling(TestPiece):
         )
 
 
+class TestCheckmate(TestPiece):
+    @unittest.skip('TODO')
+    def test_checkmate_king_castling(self):
+        pass
+
+    def test_checkmate(self):
+        board = BoardFactory.with_kings()
+
+        board.set_position(Queen(board=board, color=WHITE), 0, 0)
+        board.set_position(Queen(board=board, color=WHITE), 1, 0)
+
+        board.actual_turn = BLACK
+
+        # self.assertTrue(board.is_check())
+        self.assertTrue(board.is_checkmate())
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|Q   k   |\n'\
+            '2|Q       |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|        |\n'\
+            '8|    K   |\n'\
+            'W*--------*\n'
+        self.assertBoardEqual(
+            str(board),
+            expected_board
+        )
+
+    def test_not_checkmate_move_king(self):
+        board = BoardFactory.with_kings()
+
+        board.set_position(Queen(board=board, color=WHITE), 0, 0)
+
+        board.actual_turn = BLACK
+
+        # self.assertTrue(board.is_check())
+        self.assertFalse(board.is_checkmate())
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|Q   k   |\n'\
+            '2|        |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|        |\n'\
+            '8|    K   |\n'\
+            'W*--------*\n'
+        self.assertBoardEqual(
+            str(board),
+            expected_board
+        )
+
+    def test_not_checkmate_move_queen(self):
+        board = BoardFactory.with_kings()
+
+        board.set_position(Queen(board=board, color=WHITE), 0, 0)
+        board.set_position(Queen(board=board, color=BLACK), 1, 1)
+
+        board.actual_turn = BLACK
+
+        # self.assertTrue(board.is_check())
+        self.assertFalse(board.is_checkmate())
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|Q   k   |\n'\
+            '2| q      |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|        |\n'\
+            '8|    K   |\n'\
+            'W*--------*\n'
+        self.assertBoardEqual(
+            str(board),
+            expected_board
+        )
+
+    def test_not_checkmate_eat_queen(self):
+        board = BoardFactory.with_kings()
+
+        board.set_position(Queen(board=board, color=WHITE), 0, 0)
+        board.set_position(Queen(board=board, color=WHITE), 1, 1)
+        board.set_position(Queen(board=board, color=BLACK), 7, 0)
+
+        board.actual_turn = BLACK
+
+        # self.assertTrue(board.is_check())
+        self.assertFalse(board.is_checkmate())
+
+        expected_board = \
+            'B*12345678*\n' \
+            '1|Q   k   |\n'\
+            '2| Q      |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|        |\n'\
+            '8|q   K   |\n'\
+            'W*--------*\n'
+        self.assertBoardEqual(
+            str(board),
+            expected_board
+        )
+
+
 if __name__ == '__main__':
     unittest.main()

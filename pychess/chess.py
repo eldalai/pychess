@@ -27,6 +27,7 @@ RESULT_MOVE = 'moved'
 RESULT_EAT = 'eat'
 RESULT_PROMOTE = 'promote'
 RESULT_CHECK = 'check'
+RESULT_CHECKMATE = 'checkmate'
 
 
 def get_opposite_color(color):
@@ -66,6 +67,10 @@ class InvalidCheckException(ChessException):
 
 
 class InvalidPromoteException(ChessException):
+    pass
+
+
+class InvalidCastlingException(ChessException):
     pass
 
 
@@ -570,7 +575,7 @@ class Board(object):
             self._verify_piece_in_path(piece, to_row, to_col)
         return castling, promote
 
-    def move(self, from_row, from_col, to_row, to_col, promotion_piece=None):
+    def _move(self, from_row, from_col, to_row, to_col, promotion_piece=None):
         if not self._validate_move_args(from_row, from_col, to_row, to_col):
             raise InvalidArgumentException()
         piece = self.get_piece_to_move(from_row, from_col)
@@ -585,11 +590,29 @@ class Board(object):
             else:
                 if not promotion_piece:
                     raise InvalidPromoteException()
+        if castling:
+            if to_col == SHORT_CASTING_COL:
+                castling_rook_position = self.get_position(to_row, DEFAULT_CHESS_BOARD_SIZE - 1)
+            else:
+                castling_rook_position = self.get_position(to_row, 0)
+            if(
+                not castling_rook_position.is_empty
+                or not isinstance(castling_rook_position.piece, Rook)
+                or not castling_rook_position.piece.color == piece.color
+            ):
+                raise InvalidCastlingException()
+        return self.move_piece(piece, to_row, to_col, castling, promote, promotion_piece)
 
-        move_result = self.move_piece(piece, to_row, to_col, castling, promote, promotion_piece)
-
+    def move(self, from_row, from_col, to_row, to_col, promotion_piece=None):
+        (
+            move_result,
+            revert_move_args,
+        ) = self._move(from_row, from_col, to_row, to_col, promotion_piece)
         self.actual_turn = get_opposite_color(self.actual_turn)
         if self.is_check():
+            if self.is_checkmate():
+                return (RESULT_CHECKMATE, King.PIECE_LETTER)
+            piece = revert_move_args[0]
             return (RESULT_CHECK, piece.PIECE_LETTER)
         return move_result
 
@@ -632,6 +655,28 @@ class Board(object):
                     and isinstance(cell.piece, King)
                 ):
                     return cell.piece
+
+    def _get_all_positions(self):
+        result = []
+        for row in range(self.size):
+            for col in range(self.size):
+                result.append((row, col,))
+        return result
+
+    def is_checkmate(self):
+        for piece in self.get_color_pieces(self.actual_turn):
+            for to_row, to_col in self._get_all_positions():
+                try:
+                    (
+                        move_result,
+                        revert_move_args,
+                    ) = self._move(piece.row, piece.col, to_row, to_col, 'q')
+                    if not self.is_check():
+                        self._revert_move(*revert_move_args)
+                        return False
+                except Exception:
+                    pass  # Invalid move
+        return True
 
     def is_check(self):
         actual_turn_king = self.get_king(self.actual_turn)
@@ -679,15 +724,21 @@ class Board(object):
                 self.set_position(castling_rook, to_row, LONG_CASTING_COL + 1)
         if self.size == DEFAULT_CHESS_BOARD_SIZE:
             if self.is_check():
-                # if check, revert move
-                self.set_position(piece, from_row, from_col)
-                if eaten_piece:
-                    self.set_position(eaten_piece, to_row, to_col)
-                else:
-                    self.get_position(to_row, to_col).set_empty()
+                # # if check, revert move
+                self._revert_move(piece, from_row, from_col, eaten_piece, to_row, to_col)
                 # TODO: revert rook move on castling rook
                 raise InvalidCheckException()
-        return move_result
+        return (
+            move_result,
+            (piece, from_row, from_col, eaten_piece, to_row, to_col,)
+        )
+
+    def _revert_move(self, piece, from_row, from_col, eaten_piece, to_row, to_col):
+        self.set_position(piece, from_row, from_col)
+        if eaten_piece:
+            self.set_position(eaten_piece, to_row, to_col)
+        else:
+            self.get_position(to_row, to_col).set_empty()
 
     def __str__(self):
         _str = 'B*{}*\n'.format(
