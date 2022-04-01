@@ -29,6 +29,13 @@ RESULT_PROMOTE = 'promote'
 RESULT_CHECK = 'check'
 RESULT_CHECKMATE = 'checkmate'
 
+STATUS_PLAYING = 'playing'
+STATUS_FINISH = 'playing'
+STATUS_DRAW = 'draw'
+STATUS_WIN = '{} wins'
+STATUS_WHITE_WIN = STATUS_WIN.format(WHITE)
+STATUS_BLACK_WIN = STATUS_WIN.format(BLACK)
+
 
 def get_opposite_color(color):
     return BLACK if color == WHITE else WHITE
@@ -71,6 +78,10 @@ class InvalidPromoteException(ChessException):
 
 
 class InvalidCastlingException(ChessException):
+    pass
+
+
+class InvalidStatusException(ChessException):
     pass
 
 
@@ -504,6 +515,7 @@ class Board(object):
             [Cell(board=self, row=j, col=i) for i in range(size)]
             for j in range(size)
         ]
+        self.status = STATUS_PLAYING
 
     def get_position(self, row, col):
         return self._board[row][col]
@@ -604,6 +616,8 @@ class Board(object):
         return self.move_piece(piece, to_row, to_col, castling, promote, promotion_piece)
 
     def move(self, from_row, from_col, to_row, to_col, promotion_piece=None):
+        if self.status != STATUS_PLAYING:
+            raise InvalidStatusException('Game is over. Status is {}'.format(self.status))
         (
             move_result,
             revert_move_args,
@@ -611,6 +625,9 @@ class Board(object):
         self.actual_turn = get_opposite_color(self.actual_turn)
         if self.is_check():
             if self.is_checkmate():
+                self.status = STATUS_WIN.format(
+                    get_opposite_color(self.actual_turn)
+                )
                 return (RESULT_CHECKMATE, King.PIECE_LETTER)
             piece = revert_move_args[0]
             return (RESULT_CHECK, piece.PIECE_LETTER)

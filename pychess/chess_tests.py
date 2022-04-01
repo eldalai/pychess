@@ -13,12 +13,15 @@ from .chess import (
     InvalidMoveException,
     InvalidTurnException,
     InvalidPromoteException,
+    InvalidStatusException,
     Pawn,
     Queen,
     RESULT_MOVE,
     RESULT_EAT,
     RESULT_PROMOTE,
     RESULT_CHECK,
+    RESULT_CHECKMATE,
+    STATUS_WHITE_WIN,
 )
 
 
@@ -3172,7 +3175,7 @@ class TestCheckmate(TestPiece):
     def test_checkmate_king_castling(self):
         pass
 
-    def test_checkmate(self):
+    def test_checkmate_condition(self):
         board = BoardFactory.with_kings()
 
         board.set_position(Queen(board=board, color=WHITE), 0, 0)
@@ -3199,7 +3202,7 @@ class TestCheckmate(TestPiece):
             expected_board
         )
 
-    def test_not_checkmate_move_king(self):
+    def test_not_checkmate_move_king_condition(self):
         board = BoardFactory.with_kings()
 
         board.set_position(Queen(board=board, color=WHITE), 0, 0)
@@ -3225,7 +3228,7 @@ class TestCheckmate(TestPiece):
             expected_board
         )
 
-    def test_not_checkmate_move_queen(self):
+    def test_not_checkmate_move_queen_condition(self):
         board = BoardFactory.with_kings()
 
         board.set_position(Queen(board=board, color=WHITE), 0, 0)
@@ -3252,7 +3255,7 @@ class TestCheckmate(TestPiece):
             expected_board
         )
 
-    def test_not_checkmate_eat_queen(self):
+    def test_not_checkmate_eat_queen_condition(self):
         board = BoardFactory.with_kings()
 
         board.set_position(Queen(board=board, color=WHITE), 0, 0)
@@ -3274,6 +3277,39 @@ class TestCheckmate(TestPiece):
             '6|        |\n'\
             '7|        |\n'\
             '8|q   K   |\n'\
+            'W*--------*\n'
+        self.assertBoardEqual(
+            str(board),
+            expected_board
+        )
+
+    def test_checkmate_move(self):
+        board = BoardFactory.with_kings()
+
+        board.set_position(Queen(board=board, color=WHITE), 2, 0)
+        board.set_position(Queen(board=board, color=WHITE), 1, 1)
+
+        move_result = board.move(2, 0, 0, 0)
+        self.assertEqual(
+            move_result,
+            (RESULT_CHECKMATE, 'k')
+        )
+        self.assertEqual(
+            board.status,
+            STATUS_WHITE_WIN,
+        )
+        with self.assertRaises(InvalidStatusException):
+            move_result = board.move(0, 4, 0, 5)
+        expected_board = \
+            'B*12345678*\n' \
+            '1|Q   k   |\n'\
+            '2| Q      |\n'\
+            '3|        |\n'\
+            '4|        |\n'\
+            '5|        |\n'\
+            '6|        |\n'\
+            '7|        |\n'\
+            '8|    K   |\n'\
             'W*--------*\n'
         self.assertBoardEqual(
             str(board),
