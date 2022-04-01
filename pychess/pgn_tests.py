@@ -24,6 +24,28 @@ class PortableGameNotationTests(unittest.TestCase):
             17.b3 Rf6 18.c4 Qf7 19.Be3 Rg6 20.Qh4 Qf8 21.Qxh5 Be7 22.Nc3 Rg4 23.hxg4 g6
             24.Qh3 fxg4 25.Qg3 h5 26.cxd5 h4 27.Qe1 Bf5 28.dxc6  1-0
 
+            '''
+        )
+
+    def test_parse_pgn(self):
+        full_pgn_content = (
+            '''
+            [Event "Great Britain"]
+            [Site "Great Britain"]
+            [Date "1844.??.??"]
+            [Round "?"]
+            [White "Seligo"]
+            [Black "Anderssen, Adolf"]
+            [Result "1-0"]
+            [WhiteElo ""]
+            [BlackElo ""]
+            [ECO "C26"]
+
+            1.e4 e5 2.Bc4 Nf6 3.Nc3 Bc5 4.h3 O-O 5.a3 c6 6.Nf3 d5 7.exd5 cxd5 8.Ba2 Nc6
+            9.O-O e4 10.Nh2 Qd6 11.d3 Qg3 12.Ne2 Qg6 13.Kh1 Nh5 14.d4 Bd6 15.f4 Be6 16.Qe1 f5
+            17.b3 Rf6 18.c4 Qf7 19.Be3 Rg6 20.Qh4 Qf8 21.Qxh5 Be7 22.Nc3 Rg4 23.hxg4 g6
+            24.Qh3 fxg4 25.Qg3 h5 26.cxd5 h4 27.Qe1 Bf5 28.dxc6  1-0
+
             [Event "Breslau m"]
             [Site "Breslau"]
             [Date "1846.??.??"]
@@ -45,9 +67,24 @@ class PortableGameNotationTests(unittest.TestCase):
             '''
         )
 
-    def test_parse_pgn(self):
-        pgn_parsed = PGN(self.pgn_content)
+        pgn_parsed = PGN(full_pgn_content)
         self.assertEqual(len(pgn_parsed.games), 2)
+        self.assertIn(
+            '[Event "Great Britain"]',
+            pgn_parsed.games[0].content,
+        )
+        self.assertIn(
+            '28.dxc6  1-0',
+            pgn_parsed.games[0].content,
+        )
+        self.assertIn(
+            '[Event "Breslau m"]',
+            pgn_parsed.games[1].content,
+        )
+        self.assertIn(
+            'Kxe7 48.Ke3  1-0',
+            pgn_parsed.games[1].content,
+        )
 
 
 if __name__ == '__main__':
