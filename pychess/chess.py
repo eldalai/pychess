@@ -596,7 +596,7 @@ class Board(object):
             else:
                 castling_rook_position = self.get_position(to_row, 0)
             if(
-                not castling_rook_position.is_empty
+                castling_rook_position.is_empty
                 or not isinstance(castling_rook_position.piece, Rook)
                 or not castling_rook_position.piece.color == piece.color
             ):
