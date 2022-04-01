@@ -156,27 +156,6 @@ class Pawn(Piece):
         BLACK: +1,
     }
 
-    def __init__(self, board, color):
-        super(Pawn, self).__init__(board, color)
-
-    # def _do_move(
-    #     self,
-    #     to_row,
-    #     to_col,
-    #     jump=False,
-    #     should_eat=False,
-    #     should_not_eat=False,
-    # ):
-    #     move_result = super(Pawn, self)._do_move(to_row, to_col, jump, should_eat, should_not_eat)
-    #     if to_row in PROMOTE_PAWN_ROWS[self.board.size]:
-    #         self.board.set_position(
-    #             Queen(board=self.board, color=self.color),
-    #             row=to_row,
-    #             col=to_col,
-    #         )
-    #         return (RESULT_PROMOTE, self.PIECE_LETTER)
-    #     return move_result
-
     def evaluate_move(self, to_row, to_col):
         # simple move
         if(
